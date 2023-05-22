@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindManyOptions } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { CreateCourseDto } from './dto/create-course-dto';
 
@@ -38,20 +38,28 @@ export class CourseService {
   
   // course.service.ts
 
-async findByTeacher(teacherName: string): Promise<Course> {
-  const course = await this.courseRepository.findOneBy({ teacherName });
-  if (!course){
-    throw new ConflictException(`Course with teacherName ${teacherName} not found`)
+  async findByTeacher(teacherName: string): Promise<Course[]> {
+    const options: FindManyOptions<Course> = {
+      where: { teacherName },
+    };
+  
+    const courses = await this.courseRepository.find(options);
+    if (courses.length === 0) {
+      throw new ConflictException(`Courses with teacherName ${teacherName} not found`);
+    }
+    return courses;
   }
-  return course;
-}
+  
 
-async findByCourseName(courseName: string): Promise<Course> {
-  const course = await this.courseRepository.findOneBy({ courseName });
-  if (!course){
-    throw new ConflictException(`Course with teacherName ${courseName} not found`)
-  }
-  return course;
+async findByCourseName(courseName: string): Promise<Course[]> {
+  const options: FindManyOptions<Course> = {
+    where: { courseName },
+  };
+  const courses = await this.courseRepository.find(options);
+    if (courses.length === 0) {
+      throw new ConflictException(`Courses with courseName ${courseName} not found`);
+    }
+    return courses;
 }
 
   async update(classID: number, updateCourseDto: CreateCourseDto): Promise<Course> {

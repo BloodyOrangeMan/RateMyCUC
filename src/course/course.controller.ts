@@ -22,12 +22,12 @@ export class CourseController {
   }
 
   @Get('teacher/:teacherName')
-  async findByTeacher(@Param('teacherName') teacherName: string): Promise<Course> {
+  async findByTeacher(@Param('teacherName') teacherName: string): Promise<Course[]> {
     return this.courseService.findByTeacher(teacherName);
   }
 
   @Get('name/:courseName')
-  async findByCourseName(@Param('courseName') courseName: string): Promise<Course> {
+  async findByCourseName(@Param('courseName') courseName: string): Promise<Course[]> {
     return this.courseService.findByCourseName(courseName);
   }
 

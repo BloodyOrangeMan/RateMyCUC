@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { ContainsChinese } from '../isCJK/vaildators';
 
 @Entity()
 export class Course {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   classID: number;
 
   @Column()
