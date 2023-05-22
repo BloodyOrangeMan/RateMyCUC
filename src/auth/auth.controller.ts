@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserService } from '../user/user.service';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller()
 export class AuthController {
@@ -15,18 +16,16 @@ export class AuthController {
   }
   
   @Post('auth/register')
-  async registerUser(@Body() user, @Request() req) {
-    const existingUser = await this.userService.findOne(user.name);
+  async registerUser(@Body() createUserDto: CreateUserDto, @Request() req) {
+    const existingUser = await this.userService.findOne(createUserDto.username);
     if (existingUser) {
       throw new ConflictException('Email already taken');
     }
-    const result = await this.authService.registerUser(user);
+    const result = await this.authService.registerUser(createUserDto);
     if (result.user) {
       req.login(result.user, function (err) {
         if (err) {
-          throw new Error(
-            'Sorry, somethin went wrong. We could register but sign you in.',
-          );
+          throw new Error('Sorry, something went wrong. We could register but not sign you in.');
         }
         return req.session;
       });

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,ConflictException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -20,19 +21,17 @@ export class AuthService {
     return null;
   }
   
-  async registerUser(user) {
-    // TODO:
-    // const existingUser = await this.userService.find({ email: user.email });
-    // if (existingUser) {
-    //   throw new ConflictException('Email already taken');
-    // }
-    const hashedPassword = await bcrypt.hash(user.password, 8);
+  async registerUser(createUserDto: CreateUserDto) {
+    const existingUser = await this.userService.findOne(createUserDto.username);
+    if (existingUser) {
+      throw new ConflictException('Email already taken');
+    }
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
     const res = await this.userService.create({
-      username: user.name,
-      email: user.email,
+      username: createUserDto.username,
+      email: createUserDto.email,
       password: hashedPassword,
     });
-
     delete res.password;
 
     // TODO: 'Send email.'
