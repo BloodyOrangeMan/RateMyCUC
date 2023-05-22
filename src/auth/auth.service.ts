@@ -1,7 +1,7 @@
 import { Injectable,ConflictException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../user/dto/create-user.dto';
+import { CreateUserDto } from '../user/dto/create-user-dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.userService.findOne(username);
+    const user = await this.userService.findOneByUsername(username);
     if (user && await bcrypt.compare(password, user.password)) {
       const { password, ...result } = user;
       return result;
@@ -22,9 +22,14 @@ export class AuthService {
   }
   
   async registerUser(createUserDto: CreateUserDto) {
-    const existingUser = await this.userService.findOne(createUserDto.username);
-    if (existingUser) {
+    const existingEmail = await this.userService.findOneByEmail(createUserDto.email);
+    const existingUser = await this.userService.findOneByUsername(createUserDto.username);
+
+    if (existingEmail) {
       throw new ConflictException('Email already taken');
+    }
+    if (existingUser) {
+      throw new ConflictException('Username already taken');
     }
     const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
     const res = await this.userService.create({
