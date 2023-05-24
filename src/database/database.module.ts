@@ -12,8 +12,9 @@ import { Course } from '../course/entities/course.entity';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'mysecretpassword',
       database: process.env.DB_DATABASE || 'test',
-      entities: [User,Course],
+      entities: [User, Course],
       synchronize: true,
+      autoLoadEntities: true,
     }),
   ],
 })
