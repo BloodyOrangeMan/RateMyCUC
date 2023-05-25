@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CreateUserDto } from '../user/dto/create-user-dto';
 import { LoggedInGuard } from './guards/local.guard';
-import { LoginDto } from 'src/review/dto/login-dto';
+import { LoginDto } from '../user/dto/login-dto';
 
 @ApiTags('auth')
 @Controller()
