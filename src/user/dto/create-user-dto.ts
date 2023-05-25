@@ -1,16 +1,18 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 import { ContainsChinese } from '../../course/isCJK/vaildators';
 
 export class CreateUserDto {
+  @IsNotEmpty()
+  @ContainsChinese()
+  @ApiProperty()
+  username: string;
 
-    @IsNotEmpty()
-    @ContainsChinese()
-    username: string;
+  @IsNotEmpty()
+  @ApiProperty()
+  password: string;
 
-    @IsNotEmpty()
-    password: string;
-
-    @IsEmail()
-    email: string;
-  }
-  
+  @IsEmail()
+  @ApiProperty()
+  email: string;
+}
