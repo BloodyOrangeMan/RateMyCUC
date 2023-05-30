@@ -1,3 +1,4 @@
+import { Review } from 'src/review/entities/review.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -17,10 +18,11 @@ export class Comment {
   @Column()
   content: string;
 
-  @ManyToOne(() => User, (user) => user.comments)
-  user: User;
+  // 应该需要从user查询发过的comments比较科学吧
+  // @ManyToOne(() => User, (user) => user.comments)
+  // user: User;
 
-  @ManyToOne(() => Review, review => review.comments)
+  @ManyToOne(() => Review, (review) => review.id)
   review: Review;
 
   @ManyToMany(() => User)
