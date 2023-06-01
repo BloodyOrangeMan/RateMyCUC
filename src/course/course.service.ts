@@ -1,4 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindManyOptions } from 'typeorm';
 import { Course } from './entities/course.entity';
@@ -24,18 +28,34 @@ export class CourseService {
   }
 
   async findAll(): Promise<Course[]> {
+    const courses = this.courseRepository.find();
+    if ((await courses).length === 0) {
+      throw new NotFoundException('Courses not found');
+    }
     return this.courseRepository.find();
   }
 
   async findById(classID: number): Promise<Course> {
     const course = await this.courseRepository.findOneBy({ classID });
     if (!course) {
-      throw new ConflictException(`Course with ID ${classID} not found`);
+      throw new NotFoundException(`Course with ID ${classID} not found`);
     }
     return course;
   }
 
-  // course.service.ts
+  async findByNumber(courseNumber: string): Promise<Course[]> {
+    const options: FindManyOptions<Course> = {
+      where: { courseNumber },
+    };
+
+    const courses = await this.courseRepository.find(options);
+    if (courses.length === 0) {
+      throw new NotFoundException(
+        `Courses with teacherName ${courseNumber} not found`,
+      );
+    }
+    return courses;
+  }
 
   async findByTeacher(teacherName: string): Promise<Course[]> {
     const options: FindManyOptions<Course> = {
@@ -44,7 +64,7 @@ export class CourseService {
 
     const courses = await this.courseRepository.find(options);
     if (courses.length === 0) {
-      throw new ConflictException(
+      throw new NotFoundException(
         `Courses with teacherName ${teacherName} not found`,
       );
     }
@@ -57,7 +77,7 @@ export class CourseService {
     };
     const courses = await this.courseRepository.find(options);
     if (courses.length === 0) {
-      throw new ConflictException(
+      throw new NotFoundException(
         `Courses with courseName ${courseName} not found`,
       );
     }
@@ -70,7 +90,7 @@ export class CourseService {
   ): Promise<Course> {
     const result = await this.courseRepository.update(classID, updateCourseDto);
     if (result.affected === 0) {
-      throw new ConflictException(`Course with ID ${classID} not found`);
+      throw new NotFoundException(`Course with ID ${classID} not found`);
     }
     return this.courseRepository.findOneBy({ classID });
   }
@@ -78,7 +98,7 @@ export class CourseService {
   async delete(id: number): Promise<void> {
     const result = await this.courseRepository.delete(id);
     if (result.affected === 0) {
-      throw new ConflictException(`Course with ID ${id} not found`);
+      throw new NotFoundException(`Course with ID ${id} not found`);
     }
   }
 }
