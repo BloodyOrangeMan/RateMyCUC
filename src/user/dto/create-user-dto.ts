@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ContainsChinese } from '../../course/isCJK/vaildators';
+import { ContainsChinese } from '../../vaildator/vaildators';
 
 export class CreateUserDto {
   @IsNotEmpty()
