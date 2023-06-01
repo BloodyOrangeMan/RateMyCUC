@@ -38,7 +38,7 @@ export class Course {
   @ApiProperty({ example: '张也', description: 'The teacher name.' })
   teacherName: string;
 
-  @Column()
+  @Column('decimal', { precision: 3, scale: 1 })
   @ApiProperty({ example: 2.5, description: 'The credit hours of the course.' })
   credit: number;
 
