@@ -1,4 +1,5 @@
 import { Review } from 'src/review/entities/review.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
 import {
   Entity,
   Column,
@@ -29,4 +30,13 @@ export class User {
 
   @ManyToMany(() => Review, (review) => review.downvoteUser)
   downvotedReviews: Review[];
+
+  @OneToMany(() => Comment, (comment) => comment.author)
+  authoredComments: Comment[];
+
+  @OneToMany(() => Comment, (comment) => comment.upvoteUser)
+  upvotedComments: Comment[];
+
+  @OneToMany(() => Comment, (comment) => comment.downvoteUser)
+  downvotedComments: Comment[];
 }

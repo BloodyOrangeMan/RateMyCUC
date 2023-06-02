@@ -9,6 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
+import { Course } from '../../course/entities/course.entity';
 
 @Entity()
 export class Comment {
@@ -22,14 +23,26 @@ export class Comment {
   // @ManyToOne(() => User, (user) => user.comments)
   // user: User;
 
-  @ManyToOne(() => Review, (review) => review.id)
+  @ManyToOne(() => Review, (review) => review.comment)
   review: Review;
 
   @ManyToMany(() => User)
   @JoinTable()
-  likes: User[];
+  upvoteUser: User[];
+
+  @Column({ type: 'int', default: 0 })
+  upvoteCount: number;
 
   @ManyToMany(() => User)
   @JoinTable()
-  dislikes: User[];
+  downvoteUser: User[];
+
+  @Column({ type: 'int', default: 0 })
+  downvoteCount: number;
+
+  @ManyToOne(() => User, (user) => user.authoredReviews)
+  author: User;
+
+  @ManyToOne(() => Course, (course) => course.comment)
+  course: Course;
 }

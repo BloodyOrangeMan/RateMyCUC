@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -34,7 +35,7 @@ export class CommentController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get comments' })
+  @ApiOperation({ summary: 'Get all comments' })
   @ApiResponse({
     status: 200,
     description: 'The comments have been successfully retrieved.',
@@ -78,5 +79,27 @@ export class CommentController {
   @ApiParam({ name: 'id', required: true })
   async delete(@Param('id') id: string) {
     return this.commentService.delete(+id);
+  }
+
+  @Patch(':id/upvote')
+  @ApiOperation({ summary: 'Upvote comment' })
+  @ApiResponse({
+    status: 200,
+    description: 'The comment has been successfully upvoted.',
+  })
+  @ApiParam({ name: 'id', required: true })
+  async upvote(@Param('id') id: string, @Body('userId') userId: number) {
+    return this.commentService.upvote(+id, userId);
+  }
+
+  @Patch(':id/downvote')
+  @ApiOperation({ summary: 'Downvote comment' })
+  @ApiResponse({
+    status: 200,
+    description: 'The comment has been successfully upvoted.',
+  })
+  @ApiParam({ name: 'id', required: true })
+  async downvote(@Param('id') id: string, @Body('userId') userId: number) {
+    return this.commentService.downvote(+id, userId);
   }
 }

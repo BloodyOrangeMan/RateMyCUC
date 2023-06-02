@@ -1,12 +1,24 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { ContainsChinese } from '../../vaildator/vaildators';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { ContainsChinese } from '../../validators/validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Review } from '../../review/entities/review.entity';
+import { Comment } from '../../comment/entities/comment.entity';
+import { Teacher } from '../../teacher/entities/teacher.entity';
 
 @Entity()
 export class Course {
   @PrimaryGeneratedColumn()
-  @ApiProperty({ example: 1, description: 'The unique identifier of the course.' })
+  @ApiProperty({
+    example: 1,
+    description: 'The unique identifier of the course.',
+  })
   classID: number;
 
   @Column()
@@ -20,7 +32,10 @@ export class Course {
 
   @Column()
   @ContainsChinese()
-  @ApiProperty({ example: '限选课程', description: 'The course limit description.' })
+  @ApiProperty({
+    example: '限选课程',
+    description: 'The course limit description.',
+  })
   limitDesc: string;
 
   @Column()
@@ -48,6 +63,15 @@ export class Course {
 
   @OneToMany(() => Review, (review) => review.course)
   reviews: Review[];
+
+  @OneToMany(() => Comment, (comment) => comment.course)
+  comment: Comment[];
+
+  @ManyToMany(() => Teacher, (teacher) => teacher.courses, {
+    cascade: ['insert'],
+  })
+  @JoinTable()
+  teachers: Teacher[];
 
   @Column({ type: 'int', default: 0 })
   totalDifficulty: number;
