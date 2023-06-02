@@ -1,11 +1,13 @@
 import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
-import { ContainsChinese } from '../../vaildator/vaildators';
+import { ContainsChinese } from '../../validators/validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCourseDto {
-  @IsNotEmpty()
   @IsNumber()
-  @ApiProperty({ example: 1, description: 'The unique identifier of the course.' })
+  @ApiProperty({
+    example: 1,
+    description: 'The unique identifier of the course.',
+  })
   classID: number;
 
   @IsNotEmpty()
@@ -22,7 +24,10 @@ export class CreateCourseDto {
   @IsNotEmpty()
   @IsString()
   @ContainsChinese()
-  @ApiProperty({ example: '限选课程', description: 'The course limit description.' })
+  @ApiProperty({
+    example: '限选课程',
+    description: 'The course limit description.',
+  })
   limitDesc: string;
 
   @IsNotEmpty()

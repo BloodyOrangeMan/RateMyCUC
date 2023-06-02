@@ -7,23 +7,40 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindManyOptions } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { CreateCourseDto } from './dto/create-course-dto';
+import { Teacher } from 'src/teacher/entities/teacher.entity';
 
 @Injectable()
 export class CourseService {
   constructor(
     @InjectRepository(Course)
     private courseRepository: Repository<Course>,
+    @InjectRepository(Teacher)
+    private teacherRepository: Repository<Teacher>,
   ) {}
 
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
-    const { classID } = createCourseDto;
+    const { classID, teacherName } = createCourseDto;
 
     const existingCourse = await this.courseRepository.findOneBy({ classID });
     if (existingCourse) {
       throw new ConflictException('A course with the same ID already exists');
     }
 
+    let teacher: Teacher;
+    if (teacherName) {
+      teacher = await this.teacherRepository.findOneBy({ teacherName });
+      if (teacher) {
+        // Update the existing teacher
+        teacher.teacherName = teacherName;
+      } else {
+        // Create a new teacher
+        teacher = this.teacherRepository.create({ teacherName });
+      }
+    }
+
     const course = this.courseRepository.create(createCourseDto);
+    course.teachers = [teacher]; // Set the teacher array
+
     return this.courseRepository.save(course);
   }
 

@@ -5,9 +5,11 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { Course } from '../../course/entities/course.entity';
+import { Comment } from '../../comment/entities/comment.entity';
 
 @Entity()
 export class Review {
@@ -46,9 +48,15 @@ export class Review {
   @Column({ type: 'int', default: 0 })
   downvoteCount: number;
 
+  @OneToMany(() => Comment, (comment) => comment.review)
+  comment: Comment[];
+
   @ManyToOne(() => User, (user) => user.authoredReviews)
   author: User;
 
   @ManyToOne(() => Course, (course) => course.reviews)
   course: Course;
+
+  @Column({ type: 'int', default: 0 })
+  numberOfComments: number;
 }

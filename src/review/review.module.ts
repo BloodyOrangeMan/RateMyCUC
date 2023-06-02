@@ -6,10 +6,11 @@ import { Review } from './entities/review.entity';
 import { UsersModule } from '../user/user.module';
 import { CourseModule } from '../course/course.module';
 import { User } from 'src/user/entities/user.entity';
+import { Course } from 'src/course/entities/course.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Review, User]),
+    TypeOrmModule.forFeature([Review, User, Course]),
     UsersModule,
     CourseModule,
   ],

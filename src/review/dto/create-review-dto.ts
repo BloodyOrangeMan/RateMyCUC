@@ -36,4 +36,14 @@ export class CreateReviewDto {
   @IsNotEmpty()
   @ApiProperty()
   content: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  @ApiProperty()
+  upvoteCount: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  @ApiProperty()
+  downvoteCount: number;
 }

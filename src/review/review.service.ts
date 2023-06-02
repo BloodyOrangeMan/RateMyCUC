@@ -5,6 +5,7 @@ import { Review } from './entities/review.entity';
 import { CreateReviewDto } from './dto/create-review-dto';
 import { User } from '../user/entities/user.entity';
 import { Course } from 'src/course/entities/course.entity';
+import { reviewContentLength } from '../validators/validator';
 
 @Injectable()
 export class ReviewService {
@@ -13,11 +14,12 @@ export class ReviewService {
     private reviewRepository: Repository<Review>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(User)
+    @InjectRepository(Course)
     private courseRepository: Repository<Course>,
   ) {}
 
   async create(createReviewDto: CreateReviewDto): Promise<Review> {
+    reviewContentLength(createReviewDto.content);
     const author = await this.userRepository.findOneBy({
       id: createReviewDto.authorId,
     });
@@ -42,7 +44,11 @@ export class ReviewService {
 
     await this.courseRepository.save(course);
 
-    return this.reviewRepository.save(review);
+    const responseReview = await this.reviewRepository.save(review);
+
+    delete responseReview.author.password;
+
+    return responseReview;
   }
 
   async findAll(): Promise<Review[]> {
@@ -58,6 +64,7 @@ export class ReviewService {
   }
 
   async update(id: number, updateReviewDto: CreateReviewDto): Promise<Review> {
+    reviewContentLength(updateReviewDto.content);
     const result = await this.reviewRepository.update(id, updateReviewDto);
     if (result.affected === 0) {
       throw new NotFoundException(`Review with ID ${id} not found`);
@@ -73,19 +80,14 @@ export class ReviewService {
   }
 
   async upvote(reviewId: number, userId: number): Promise<Review> {
-    const review = await this.reviewRepository.findOne({
-      where: {
-        id: reviewId,
-      },
-      relations: ['upvoteUser', 'upvoteCount'],
+    const review = await this.reviewRepository.findOneBy({
+      id: reviewId,
     });
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!review || !user) {
       throw new NotFoundException('Review or User not found');
     }
-
-    review.upvoteUser.push(user);
 
     review.upvoteCount += 1;
 
@@ -93,19 +95,14 @@ export class ReviewService {
   }
 
   async downvote(reviewId: number, userId: number): Promise<Review> {
-    const review = await this.reviewRepository.findOne({
-      where: {
-        id: reviewId,
-      },
-      relations: ['downvoteUser', 'downvoteCount'],
+    const review = await this.reviewRepository.findOneBy({
+      id: reviewId,
     });
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!review || !user) {
       throw new NotFoundException('Review or User not found');
     }
-
-    review.downvoteUser.push(user);
 
     review.downvoteCount += 1;
 

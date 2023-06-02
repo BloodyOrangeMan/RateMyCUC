@@ -7,12 +7,13 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
-  ApiBody, 
-  ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CourseService } from './course.service';
 import { Course } from './entities/course.entity';
 
@@ -62,11 +63,14 @@ export class CourseController {
   @ApiParam({ name: 'courseNumber', type: 'string' })
   @ApiResponse({
     status: 200,
-    description: 'Returns an array of courses with the specified course number.',
+    description:
+      'Returns an array of courses with the specified course number.',
     type: Course,
     isArray: true,
   })
-  async findByNumber(@Param('courseNumber') courseNumber: string): Promise<Course[]> {
+  async findByNumber(
+    @Param('courseNumber') courseNumber: string,
+  ): Promise<Course[]> {
     return this.courseService.findByNumber(courseNumber);
   }
 
@@ -79,7 +83,9 @@ export class CourseController {
     type: Course,
     isArray: true,
   })
-  async findByTeacher(@Param('teacherName') teacherName: string): Promise<Course[]> {
+  async findByTeacher(
+    @Param('teacherName') teacherName: string,
+  ): Promise<Course[]> {
     return this.courseService.findByTeacher(teacherName);
   }
 
@@ -92,7 +98,9 @@ export class CourseController {
     type: Course,
     isArray: true,
   })
-  async findByCourseName(@Param('courseName') courseName: string): Promise<Course[]> {
+  async findByCourseName(
+    @Param('courseName') courseName: string,
+  ): Promise<Course[]> {
     return this.courseService.findByCourseName(courseName);
   }
 
@@ -105,7 +113,10 @@ export class CourseController {
     description: 'Returns the updated course.',
     type: Course,
   })
-  async update(@Param('id') id: number, @Body() course: Course): Promise<Course> {
+  async update(
+    @Param('id') id: number,
+    @Body() course: Course,
+  ): Promise<Course> {
     return this.courseService.update(id, course);
   }
 
