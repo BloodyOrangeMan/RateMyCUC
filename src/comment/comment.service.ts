@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
@@ -102,32 +106,53 @@ export class CommentService {
   // }
 
   async upvote(commentId: number, userId: number): Promise<Comment> {
-    const comment = await this.commentRepository.findOneBy({
-      id: commentId,
+    const comment = await this.commentRepository.findOne({
+      where: {
+        id: commentId,
+      },
+      relations: ['upvoteUser', 'downvoteUser'],
     });
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!comment || !user) {
       throw new NotFoundException('Comment or User not found');
     }
-
+    if (this.checkDuplicate(comment, user)) {
+      throw new ConflictException('The User has already upvoted/downvoted!');
+    }
     comment.upvoteCount += 1;
 
     return this.commentRepository.save(comment);
   }
 
   async downvote(commentId: number, userId: number): Promise<Comment> {
-    const comment = await this.commentRepository.findOneBy({
-      id: commentId,
+    const comment = await this.commentRepository.findOne({
+      where: {
+        id: commentId,
+      },
+      relations: ['upvoteUser', 'downvoteUser'],
     });
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!comment || !user) {
       throw new NotFoundException('Comment or User not found');
     }
-
+    if (this.checkDuplicate(comment, user)) {
+      throw new ConflictException('The User has already upvoted/downvoted!');
+    }
     comment.downvoteCount += 1;
 
     return this.commentRepository.save(comment);
+  }
+
+  checkDuplicate(comment: Comment, user: User): boolean {
+    return (
+      comment.upvoteUser.some((userFromComment) => {
+        return userFromComment.id == user.id;
+      }) ||
+      comment.downvoteUser.some((userFromComment) => {
+        return userFromComment.id == user.id;
+      })
+    );
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
@@ -80,32 +84,56 @@ export class ReviewService {
   }
 
   async upvote(reviewId: number, userId: number): Promise<Review> {
-    const review = await this.reviewRepository.findOneBy({
-      id: reviewId,
+    const review = await this.reviewRepository.findOne({
+      where: {
+        id: reviewId,
+      },
+      relations: ['upvoteUser', 'downvoteUser'],
     });
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!review || !user) {
       throw new NotFoundException('Review or User not found');
     }
+    if (this.checkDuplicate(review, user)) {
+      throw new ConflictException('The User has already upvoted/downvoted!');
+    }
 
     review.upvoteCount += 1;
+    review.upvoteUser.push(user);
+
+    return await this.reviewRepository.save(review);
+  }
+
+  async downvote(reviewId: number, userId: number): Promise<Review> {
+    const review = await this.reviewRepository.findOne({
+      where: {
+        id: reviewId,
+      },
+      relations: ['upvoteUser', 'downvoteUser'],
+    });
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!review || !user) {
+      throw new NotFoundException('Review or User not found');
+    }
+    if (this.checkDuplicate(review, user)) {
+      throw new ConflictException('The User has already upvoted/downvoted!');
+    }
+    review.downvoteCount += 1;
+    review.downvoteUser.push(user);
 
     return this.reviewRepository.save(review);
   }
 
-  async downvote(reviewId: number, userId: number): Promise<Review> {
-    const review = await this.reviewRepository.findOneBy({
-      id: reviewId,
-    });
-    const user = await this.userRepository.findOneBy({ id: userId });
-
-    if (!review || !user) {
-      throw new NotFoundException('Review or User not found');
-    }
-
-    review.downvoteCount += 1;
-
-    return this.reviewRepository.save(review);
+  checkDuplicate(review: Review, user: User): boolean {
+    return (
+      review.upvoteUser.some((userFromReview) => {
+        return userFromReview.id == user.id;
+      }) ||
+      review.downvoteUser.some((userFromReview) => {
+        return userFromReview.id == user.id;
+      })
+    );
   }
 }
