@@ -4,10 +4,12 @@ import * as passport from 'passport';
 import * as session from 'express-session';
 import * as morgan from 'morgan';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(morgan('dev'));
+  app.useGlobalPipes(new ValidationPipe());
   app.use(
     session({
       secret: process.env.JWT_SECRET,

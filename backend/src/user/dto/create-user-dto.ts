@@ -1,10 +1,8 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ContainsChinese } from '../../validators/validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
-  @ContainsChinese()
   @ApiProperty()
   username: string;
 
@@ -14,5 +12,8 @@ export class CreateUserDto {
 
   @IsEmail()
   @ApiProperty()
+  @Matches(/^[\w-]+(\.[\w-]+)*@cuc\.edu\.cn$/, {
+    message: 'Email must end with @cuc.edu.cn',
+  })
   email: string;
 }

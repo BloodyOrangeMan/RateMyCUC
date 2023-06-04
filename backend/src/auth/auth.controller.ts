@@ -34,14 +34,14 @@ export class AuthController {
   async registerUser(@Body() createUserDto: CreateUserDto, @Request() req) {
     const result = await this.authService.registerUser(createUserDto);
     if (result.user) {
-      req.login(result.user, function (err) {
+      await req.login(result.user, function (err) {
         if (err) {
           throw new Error(
             'Sorry, something went wrong. We could register but not sign you in.',
           );
         }
-        return req.session;
       });
+      return req.session;
     }
   }
 
