@@ -236,6 +236,7 @@ module.exports = {
     'import/resolver': {
       node: {
         extensions: ['.ts', '.js', '.tsx', '.jsx', '.mjs', '.png', '.jpg'],
+        moduleDirecrtory: ['src', 'node_modules'],
       },
       typescript: {},
     },

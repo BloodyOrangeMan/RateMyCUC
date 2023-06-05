@@ -15,8 +15,30 @@ export const useAuthStore = defineStore('auth', {
           email,
           password,
         })
+
         // Assuming the API responds with a token and user information
         if (response && response.data) {
+          console.log('hey')
+          this.user = response.data.passport.user
+          console.log(this.isLoggedIn)
+        }
+      } catch (err) {
+        console.error(err)
+        this.logout()
+      }
+    },
+    async register(username: string, email: string, password: string) {
+      try {
+        const response = await axios.post('/auth/register', {
+          withCredentials: true,
+          username,
+          email,
+          password,
+        })
+
+        // Assuming the API responds with a token and user information
+        if (response && response.data) {
+          console.log('yes')
           this.user = response.data.passport.user
         }
       } catch (err) {
