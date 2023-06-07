@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CourseTeacher from './CourseTeacher.vue';
+
 const props = defineProps({
   item: {
     type: Object,
