@@ -26,18 +26,17 @@ const authStore = useAuthStore()
 const schema = yup.object({
   password: yup.string().min(8, 'must be at least 8 characters long').required(),
   email: yup.string().email().required(),
-});
+})
 
 const { useFieldModel, errors, handleSubmit } = useForm({
   validationSchema: schema,
-});
+})
 
-const [password, email] = useFieldModel(['password', 'email']);
-
+const [password, email] = useFieldModel(['password', 'email'])
 
 const onSubmit = handleSubmit((values) => {
   authStore.login(values.email, values.password)
-});
+})
 
 const isPasswordVisible = ref(false)
 </script>

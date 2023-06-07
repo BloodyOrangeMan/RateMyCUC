@@ -118,4 +118,42 @@ export class CourseService {
       throw new NotFoundException(`Course with ID ${id} not found`);
     }
   }
+
+  async findCourseList(): Promise<any[]> {
+    const courses = await this.courseRepository.find();
+
+    const departmentsMap = new Map<string, any>();
+    for (const course of courses) {
+      let department = departmentsMap.get(course.departmentName);
+      if (!department) {
+        department = {
+          departmentName: course.departmentName,
+          courseByDepartment: [],
+        };
+        departmentsMap.set(course.departmentName, department);
+      }
+
+      let courseInfo = department.courseByDepartment.find(
+        (info) => info.courseName === course.courseName,
+      );
+      if (!courseInfo) {
+        courseInfo = {
+          courseName: course.courseName,
+          courseList: [],
+        };
+        department.courseByDepartment.push(courseInfo);
+      }
+
+      const { teacherName, credit, numberOfRatings, totalRate } =
+        course;
+      courseInfo.courseList.push({
+        teacherName,
+        credit,
+        numberOfRating: numberOfRatings,
+        rate: totalRate,
+      });
+    }
+
+    return Array.from(departmentsMap.values());
+  }
 }

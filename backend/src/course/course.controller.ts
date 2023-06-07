@@ -130,4 +130,9 @@ export class CourseController {
   async delete(@Param('id') id: number): Promise<void> {
     return this.courseService.delete(id);
   }
+
+  @Get('courseList')
+  async findCourseList(): Promise<Course[]> {
+    return this.courseService.findCourseList();
+  }
 }

@@ -121,7 +121,7 @@ const upgradeBanner = computed(() => {
           heading: 'User Interface',
         }"
       />
-      <VerticalNavLink
+      <!-- <VerticalNavLink
         :item="{
           title: 'Typography',
           icon: 'mdi-alpha-t-box-outline',
@@ -141,21 +141,21 @@ const upgradeBanner = computed(() => {
           icon: 'mdi-credit-card-outline',
           to: '/cards',
         }"
-      />
+      /> -->
       <VerticalNavLink
         :item="{
-          title: 'Tables',
+          title: 'Courelist',
           icon: 'mdi-table',
-          to: '/tables',
+          to: '/courselist',
         }"
       />
-      <VerticalNavLink
+      <!-- <VerticalNavLink
         :item="{
           title: 'Form Layouts',
           icon: 'mdi-form-select',
           to: '/form-layouts',
         }"
-      />
+      /> -->
     </template>
 
     <template #after-vertical-nav-items>

@@ -33,16 +33,19 @@ export class AuthController {
   @ApiBody({ type: CreateUserDto })
   async registerUser(@Body() createUserDto: CreateUserDto, @Request() req) {
     const result = await this.authService.registerUser(createUserDto);
-    if (result.user) {
-      await req.login(result.user, function (err) {
-        if (err) {
-          throw new Error(
-            'Sorry, something went wrong. We could register but not sign you in.',
-          );
-        }
-      });
-      return req.session;
-    }
+    return new Promise((resolve, reject) => {
+      if (result.user) {
+        req.login(result.user, function (err) {
+          if (err) {
+            reject(new Error('Sorry, something went wrong. We could register but not sign you in.'));
+          } else {
+            resolve(req.session);
+          }
+        });
+      } else {
+        reject(new Error('User registration failed.'));
+      }
+    });
   }
 
   @UseGuards(LoggedInGuard)

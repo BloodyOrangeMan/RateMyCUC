@@ -78,7 +78,7 @@ export default {
   },
   VRating: {
     // set v-rating default color to primary
-    color: 'rgba(var(--v-theme-on-background),0.23)',
+    color: 'rgba(var(--v-theme-on-background))',
     activeColor: 'warning',
   },
   VProgressCircular: {
