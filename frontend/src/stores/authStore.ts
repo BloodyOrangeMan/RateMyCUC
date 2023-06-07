@@ -18,9 +18,7 @@ export const useAuthStore = defineStore('auth', {
 
         // Assuming the API responds with a token and user information
         if (response && response.data) {
-          console.log('hey')
           this.user = response.data.passport.user
-          console.log(this.isLoggedIn)
         }
       } catch (err) {
         console.error(err)
@@ -38,7 +36,6 @@ export const useAuthStore = defineStore('auth', {
 
         // Assuming the API responds with a token and user information
         if (response && response.data) {
-          console.log('yes')
           this.user = response.data.passport.user
         }
       } catch (err) {
