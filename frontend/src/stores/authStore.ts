@@ -10,17 +10,17 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(email: string, password: string) {
       try {
-        const response = await axios.post('/auth/login', {
+        const response = await axios.post('api/auth/login', {
           withCredentials: true,
           email,
           password,
         })
 
         // Assuming the API responds with a token and user information
-        if (response && response.data) {
+        if (response && response.data)
           this.user = response.data.passport.user
-        }
-      } catch (err) {
+      }
+      catch (err) {
         console.error(err)
         this.logout()
       }
@@ -35,10 +35,10 @@ export const useAuthStore = defineStore('auth', {
         })
 
         // Assuming the API responds with a token and user information
-        if (response && response.data) {
+        if (response && response.data)
           this.user = response.data.passport.user
-        }
-      } catch (err) {
+      }
+      catch (err) {
         console.error(err)
         this.logout()
       }

@@ -28,11 +28,13 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('RateMyCUC')
     .build();
+  app.setGlobalPrefix('api');
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
   // Initliaze passport & passport session support.
   app.use(passport.initialize());
   app.use(passport.session());
+
   await app.listen(3000);
 }
 bootstrap();
