@@ -15,6 +15,7 @@ const props = defineProps({
     required: true,
   },
 })
+
 </script>
 <template>
   <VCard>
@@ -55,8 +56,3 @@ const props = defineProps({
     </div>
   </VCard>
 </template>
-<!-- <style lang="scss">
-#rating-star{
-  fill: orange !important;
-}
-</style> -->

@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import courseDepartment from '@/components/courseDepartment.vue'
+import CourseDepartment from '@/views/pages/courselist/CourseDepartment.vue';
 import { useCourseStore } from '@/stores/courseStore';
-
-const isCardDetailsVisible = ref(false)
 
 const courseStore = useCourseStore();
 
@@ -18,7 +16,7 @@ onMounted(() => {
       v-for="department in courseStore.courseList"
       :key="department.departmentName"
     >
-      <courseDepartment :item="department" />
+      <CourseDepartment :item="department" />
     </div>
   </div>
 </template>

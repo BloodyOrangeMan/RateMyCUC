@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CourseTable from '@/components/courseTable.vue'
+import CourseTable from '../courselist/CourseTable.vue';
 
 const props = defineProps({
     item: {
