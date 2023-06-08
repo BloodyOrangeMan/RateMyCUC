@@ -5,7 +5,7 @@ import { defineStore } from 'pinia';
 interface Course {
   coursename: string;
   teacher: string;
-  rate: number;
+  rate: string;
   numberofrating: number;
 }
 

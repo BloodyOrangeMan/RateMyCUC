@@ -124,21 +124,26 @@ export class CourseService {
       where: { departmentName },
       relations: ['teachers'],
     };
-  
+
     const courses = await this.courseRepository.find(options);
-  
-    const courseList = courses.map(course => {
-      const totalRate = course.totalRate;
-      const numberOfRatings = course.numberOfRatings;
-  
-      return course.teachers.map(teacher => ({
-        coursename: course.courseName,
-        teacher: teacher.teacherName,
-        rate: totalRate,
-        numberofrating: numberOfRatings,
-      }));
-    }).flat();
-  
+
+    const courseList = courses
+      .map((course) => {
+        const rate =
+          course.totalRate == 0
+            ? '暂无评分'
+            : (course.totalRate / course.numberOfRatings).toFixed(1).toString();
+        const numberOfRatings = course.numberOfRatings;
+
+        return course.teachers.map((teacher) => ({
+          coursename: course.courseName,
+          teacher: teacher.teacherName,
+          rate,
+          numberofrating: numberOfRatings,
+        }));
+      })
+      .flat();
+
     return courseList;
   }
 }
