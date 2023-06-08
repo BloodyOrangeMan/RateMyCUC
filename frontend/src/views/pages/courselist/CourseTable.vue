@@ -1,46 +1,25 @@
 <script setup lang="ts">
-import CourseTeacher from './CourseTeacher.vue';
+import { VDataTable } from 'vuetify/labs/VDataTable'
 
 const props = defineProps({
   item: {
-    type: Object,
+    type: Array,
     required: true,
   },
 })
 
-const isCardDetailsVisible = ref(false)
+const headers = [
+  { title: '课程名', key: 'coursename' },
+  { title: '任课教师', key: 'teacher' },
+  { title: '评分', key: 'rate' },
+  { title: '评论数', key: 'numberofrating' },
+]
 </script>
 
 <template>
-  <VTable>
-    <VCardActions>
-      <VBtn @click="isCardDetailsVisible = !isCardDetailsVisible">
-        {{ item.courseName }}
-      </VBtn>
-
-      <VSpacer />
-
-      <VBtn
-        icon
-        size="small"
-        @click="isCardDetailsVisible = !isCardDetailsVisible"
-      >
-        <VIcon :icon="isCardDetailsVisible ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
-      </VBtn>
-    </VCardActions>
-    <VExpandTransition>
-      <div v-show="isCardDetailsVisible">
-        <VDivider
-          v-for="teacher in item.courseList"
-          :key="teacher.teacherName"
-        />
-        <div
-          v-for="teacher in item.courseList"
-          :key="teacher.teacherName"
-        >
-          <CourseTeacher :item="teacher" />
-        </div>
-      </div>
-    </VExpandTransition>
-  </VTable>
+  <v-data-table
+    :headers="headers"
+    :items="item"
+    class="elevation-1"
+  ></v-data-table>
 </template>

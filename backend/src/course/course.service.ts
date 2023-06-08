@@ -119,41 +119,26 @@ export class CourseService {
     }
   }
 
-  async findCourseList(): Promise<any[]> {
-    const courses = await this.courseRepository.find();
-
-    const departmentsMap = new Map<string, any>();
-    for (const course of courses) {
-      let department = departmentsMap.get(course.departmentName);
-      if (!department) {
-        department = {
-          departmentName: course.departmentName,
-          courseByDepartment: [],
-        };
-        departmentsMap.set(course.departmentName, department);
-      }
-
-      let courseInfo = department.courseByDepartment.find(
-        (info) => info.courseName === course.courseName,
-      );
-      if (!courseInfo) {
-        courseInfo = {
-          courseName: course.courseName,
-          courseList: [],
-        };
-        department.courseByDepartment.push(courseInfo);
-      }
-
-      const { teacherName, credit, numberOfRatings, totalRate } =
-        course;
-      courseInfo.courseList.push({
-        teacherName,
-        credit,
-        numberOfRating: numberOfRatings,
+  async findCourseList(departmentName: string): Promise<any[]> {
+    const options: FindManyOptions<Course> = {
+      where: { departmentName },
+      relations: ['teachers'],
+    };
+  
+    const courses = await this.courseRepository.find(options);
+  
+    const courseList = courses.map(course => {
+      const totalRate = course.totalRate;
+      const numberOfRatings = course.numberOfRatings;
+  
+      return course.teachers.map(teacher => ({
+        coursename: course.courseName,
+        teacher: teacher.teacherName,
         rate: totalRate,
-      });
-    }
-
-    return Array.from(departmentsMap.values());
+        numberofrating: numberOfRatings,
+      }));
+    }).flat();
+  
+    return courseList;
   }
 }

@@ -1,37 +1,46 @@
-<script setup lang='ts'>
-import DemoSimpleTableBasics from '@/views/pages/tables/DemoSimpleTableBasics.vue'
-
+<script setup lang="ts">
+import CourseHeader from './CourseHeader.vue'
+import { useCourseStore } from '@/stores/courseStore'
 const props = defineProps({
-    item: {
-      type: Object,
-      required: true,
-    },
-  })
+  item: {
+    type: String,
+    required: true,
+  },
+})
 
+const courseStore = useCourseStore()
 const isCardDetailsVisible = ref(false)
 
+const fetchCourseList = async () => {
+  await courseStore.fetchCourseListByDepartment(props.item)
+}
+
+const toggleCardDetails = () => {
+  isCardDetailsVisible.value = !isCardDetailsVisible.value
+  if (isCardDetailsVisible.value) {
+    fetchCourseList()
+  }
+}
 </script>
 
 <template>
-<VRow>
+  <VRow>
     <VCol cols="12">
       <VCard>
         <VCardItem>
-            <VCardTitle>
-                {{ item.departmentName }}
-            </VCardTitle>
+          <VCardTitle>
+            {{ item }}
+          </VCardTitle>
         </VCardItem>
         <VCardActions>
-          <VBtn @click="isCardDetailsVisible = !isCardDetailsVisible">
-            Details
-          </VBtn>
+          <VBtn @click="toggleCardDetails">Details</VBtn>
 
           <VSpacer />
 
           <VBtn
             icon
             size="small"
-            @click="isCardDetailsVisible = !isCardDetailsVisible"
+            @click="toggleCardDetails"
           >
             <VIcon :icon="isCardDetailsVisible ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
           </VBtn>
@@ -40,10 +49,10 @@ const isCardDetailsVisible = ref(false)
         <VExpandTransition>
           <div v-show="isCardDetailsVisible">
             <VDivider />
-            <DemoSimpleTableBasics :item="item"/>
+            <CourseHeader :item="courseStore.courseList" />
           </div>
         </VExpandTransition>
       </VCard>
     </VCol>
   </VRow>
-  </template>
+</template>
