@@ -74,7 +74,7 @@ export class Course {
   @Column({ type: 'int', default: 0 })
   totalGain: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column( 'decimal', { precision: 3, scale: 1,default: 0  })
   totalRate: number;
 
   @Column({ type: 'int', default: 0 })

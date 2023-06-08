@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -131,8 +132,10 @@ export class CourseController {
     return this.courseService.delete(id);
   }
 
-  @Get('courseList')
-  async findCourseList(): Promise<Course[]> {
-    return this.courseService.findCourseList();
+  @Get('courseList/:departmentName')
+  async findCourseList(
+    @Param('departmentName') departmentName: string,
+  ): Promise<Course[]> {
+    return this.courseService.findCourseList(departmentName);
   }
 }
