@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import CourseDepartment from '@/views/pages/courselist/CourseDepartment.vue';
+import CourseTable from '@/views/pages/courselist/CourseTable.vue';
 
+// Define the props for the component
 const props = defineProps({
-    item: {
-      type: String,
-      required: true,
-    },
-  })
+  item: {
+    type: String,
+    required: true,
+  },
+});
 
-
- const departments = [
+// List of departments
+const departments = [
   "体育部",
   "教务处",
   "动画与数字艺术学院",
@@ -40,11 +41,12 @@ const props = defineProps({
 
 <template>
   <div>
+    <!-- Render CourseTable component for each department -->
     <div
       v-for="department in departments"
       :key="department"
     >
-      <CourseDepartment :item="department" />
+      <CourseTable :departmentName="department" />
     </div>
   </div>
 </template>

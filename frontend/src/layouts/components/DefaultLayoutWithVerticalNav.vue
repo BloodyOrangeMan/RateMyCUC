@@ -144,7 +144,7 @@ const upgradeBanner = computed(() => {
       /> -->
       <VerticalNavLink
         :item="{
-          title: 'Courelist',
+          title: 'Courselist',
           icon: 'mdi-table',
           to: '/courselist',
         }"
