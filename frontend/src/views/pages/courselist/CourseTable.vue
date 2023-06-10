@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import { useCourseStore } from '@/stores/courseStore'
+import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
+import { VDataTableFooter } from 'vuetify/labs/VDataTable'
 // Define component props
 const props = defineProps({
   departmentName: {
@@ -12,18 +14,16 @@ const props = defineProps({
 import { useRouter } from 'vue-router'
 const router = useRouter()
 // Redirect to review page
-const redirectToReview = (classID:number) => {
+const redirectToReview = (classID: number) => {
   router.push(`/review/${classID}`)
 }
 
-
 // Define table headers
 const headers = [
-  { title: 'Course Name', key: 'coursename' },
-  { title: 'Teacher', key: 'teacher' },
-  { title: 'Rating', key: 'rate' },
-  { title: 'Number of Ratings', key: 'numberofrating' },
-  { title: 'Action', key: 'classID', sortable: false },
+  { title: '课程名', key: 'coursename' },
+  { title: '授课教师', key: 'teacher' },
+  { title: '评分', key: 'rate' },
+  { title: '评测数', key: 'numberofrating' },
 ]
 
 // Search text
@@ -40,19 +40,20 @@ const isCardDetailsVisible = ref(false)
 
 // Fetch course list by department name
 const fetchCourseList = async () => {
+  loading.value = true
   await courseStore.fetchCourseListByDepartment(props.departmentName)
+  loading.value = false
 }
 
 // Toggle card details visibility
 const toggleCardDetails = () => {
   isCardDetailsVisible.value = !isCardDetailsVisible.value
   if (isCardDetailsVisible.value) {
-    loading.value = true
-    fetchCourseList().then(() => {
-      loading.value = false
-    })
+    fetchCourseList().then(() => {})
   }
 }
+
+const itemsPerPageText = '每页课程数：'
 
 // Filtered course items
 const filteredItems = computed(() => {
@@ -66,6 +67,7 @@ const filteredItems = computed(() => {
   }
 })
 
+// Handle search
 // Handle search
 const handleSearch = () => {
   loading.value = true
@@ -102,42 +104,61 @@ const handleSearch = () => {
         <VExpandTransition>
           <div v-show="isCardDetailsVisible">
             <VDivider />
-            <VTable>
-              <tbody>
-                <tr>
-                  <!-- Data table -->
-                  <td>
-                    <v-text-field
-                      v-model="searchText"
-                      variant="solo"
-                      label="输入搜索 课程/老师名"
-                      prepend-inner-icon="mdi-magnify"
-                      single-line
-                      hide-details
-                      @input="handleSearch"
-                    ></v-text-field>
-                    <v-data-table
-                      :search="searchText"
-                      :headers="headers"
-                      :items="filteredItems"
-                      class="elevation-1"
-                      :loading="loading"
-                      id="sort-header"
-                    >
-                      <!-- Custom button content for Action column -->
-                      <template v-slot:item.classID="{ item }">
-                        <v-icon
-                          size="small"
-                          class="me-2"
-                          icon="mdi-pencil"
-                          @click="redirectToReview(item.value.classID)"
-                        ></v-icon>
-                      </template>
-                    </v-data-table>
-                  </td>
-                </tr>
-              </tbody>
-            </VTable>
+            <div class="table-wrapper">
+              <v-skeleton-loader
+                v-if="loading"
+                class="loader-overlay"
+              >
+                <div id="loading-bg"></div>
+                <div class="loading-logo">
+                  <div class="loading">
+                    <div class="effect-1"></div>
+                    <div class="effect-2"></div>
+                    <div class="effect-3"></div>
+                  </div>
+                </div>
+              </v-skeleton-loader>
+              <VTable v-if="!loading">
+                <tbody>
+                  <tr>
+                    <!-- Data table -->
+                    <td>
+                      <v-text-field
+                        v-model="searchText"
+                        variant="solo"
+                        label="输入搜索 课程/老师名"
+                        prepend-inner-icon="mdi-magnify"
+                        single-line
+                        hide-details
+                        @input="handleSearch"
+                      ></v-text-field>
+                      <v-data-table
+                        :search="searchText"
+                        :headers="headers"
+                        :items="filteredItems"
+                        :items-per-page="10"
+                        class="elevation-1"
+                        id="sort-header"
+                      >
+                        <!-- Custom button content for Action column -->
+                        <template v-slot:item.coursename="{ item }">
+                          <div>
+                            <span>{{ item.value.coursename }}</span>
+                            <v-icon
+                              size="small"
+                              class="me-2 ml-4"
+                              icon="mdi-pencil"
+                              color="primary"
+                              @click="redirectToReview(item.value.classID)"
+                            ></v-icon>
+                          </div>
+                        </template>
+                      </v-data-table>
+                    </td>
+                  </tr>
+                </tbody>
+              </VTable>
+            </div>
           </div>
         </VExpandTransition>
       </VCard>
@@ -146,6 +167,26 @@ const handleSearch = () => {
 </template>
 
 <style lang="scss">
+/* Add the loading styles here */
+@import '../../../../dist/loader.css';
+.table-wrapper {
+  position: relative;
+  min-height: 300px; /* Set a minimum height to ensure the wrapper is visible even if the table is empty */
+}
+
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #sort-header {
   .v-data-table-header__content {
     justify-content: inherit;
