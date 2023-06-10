@@ -7,6 +7,7 @@ interface Course {
   teacher: string;
   rate: string;
   numberofrating: number;
+  classID: number;
 }
 
 // Define the course store using pinia
