@@ -38,6 +38,7 @@
     "vue3-apexcharts": "^1.4.1",
     "vue3-perfect-scrollbar": "^1.6.0",
     "vuetify": "3.2.1",
+    "vuetify-pro-tiptap": "^2.0.2",
     "webfontloader": "^1.6.28",
     "yup": "^1.2.0"
   },

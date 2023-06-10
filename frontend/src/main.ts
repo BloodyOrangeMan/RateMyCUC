@@ -3,6 +3,7 @@ import '@/@iconify/icons-bundle'
 import App from '@/App.vue'
 import vuetify from '@/plugins/vuetify'
 import { loadFonts } from '@/plugins/webfontloader'
+import { vuetifyProTipTap } from '@/plugins/vuetify-pro-tiptap/index'
 import router from '@/router'
 import '@core/scss/template/index.scss'
 import '@layouts/styles/index.scss'
@@ -17,6 +18,7 @@ const app = createApp(App)
 
 // Use plugins
 app.use(vuetify)
+app.use(vuetifyProTipTap)
 app.use(createPinia())
 app.use(router)
 
