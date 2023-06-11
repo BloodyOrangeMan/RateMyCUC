@@ -2,26 +2,33 @@ import { IsInt, Min, Max, IsNotEmpty, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReviewDto {
-  @IsInt()
-  @Min(1)
-  @Max(10)
+  @IsNumber()
+  @Min(0)
+  @Max(5)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ type: Number, format: 'float', minimum: 0, maximum: 5 })
   difficulty: number;
 
-  @IsInt()
-  @Min(1)
-  @Max(10)
+  @IsNumber()
+  @Min(0)
+  @Max(5)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ type: Number, format: 'float', minimum: 0, maximum: 5 })
   gain: number;
 
-  @IsInt()
-  @Min(1)
-  @Max(10)
+  @IsNumber()
+  @Min(0)
+  @Max(5)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ type: Number, format: 'float', minimum: 0, maximum: 5 })
   rate: number;
+
+  @IsNumber()
+  @Min(0)
+  @Max(5)
+  @IsNotEmpty()
+  @ApiProperty({ type: Number, format: 'float', minimum: 0, maximum: 5 })
+  score: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -37,13 +44,11 @@ export class CreateReviewDto {
   @ApiProperty()
   content: string;
 
-  @IsNotEmpty()
-  @IsInt()
-  @ApiProperty()
-  upvoteCount: number;
+  // @IsInt()
+  // @ApiProperty()
+  // upvoteCount: number;
 
-  @IsNotEmpty()
-  @IsInt()
-  @ApiProperty()
-  downvoteCount: number;
+  // @IsInt()
+  // @ApiProperty()
+  // downvoteCount: number;
 }

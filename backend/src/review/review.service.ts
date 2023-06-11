@@ -34,16 +34,15 @@ export class ReviewService {
     if (!author || !course) {
       throw new NotFoundException('User or Course not found');
     }
-
     const review = this.reviewRepository.create({
       ...createReviewDto,
       author,
       course,
     });
-
     course.totalDifficulty += createReviewDto.difficulty;
     course.totalGain += createReviewDto.gain;
     course.totalRate += createReviewDto.rate;
+    course.totalScore += createReviewDto.score;
     course.numberOfRatings += 1;
 
     await this.courseRepository.save(course);

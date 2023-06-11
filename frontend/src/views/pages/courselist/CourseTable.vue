@@ -168,7 +168,7 @@ const handleSearch = () => {
 
 <style lang="scss">
 /* Add the loading styles here */
-@import '../../../../dist/loader.css';
+@import '../../../../public/loader.css';
 .table-wrapper {
   position: relative;
   min-height: 300px; /* Set a minimum height to ensure the wrapper is visible even if the table is empty */

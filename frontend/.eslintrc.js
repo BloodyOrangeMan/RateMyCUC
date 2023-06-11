@@ -158,7 +158,6 @@ module.exports = {
     'vue/prefer-separate-static-class': 'error',
     'vue/prefer-true-attribute-shorthand': 'error',
     'vue/v-on-function-call': 'error',
-    'vue/no-restricted-class': ['error', '/^(p|m)(l|r)-/'],
     'vue/valid-v-slot': ['error', {
       allowModifiers: true,
     }],
@@ -180,8 +179,8 @@ module.exports = {
     // }],
 
     // Internal Rules
-    'valid-appcardcode-code-prop': 'error',
-    'valid-appcardcode-demo-sfc': 'error',
+    // 'valid-appcardcode-code-prop': 'error',
+    // 'valid-appcardcode-demo-sfc': 'error',
 
     // https://github.com/gmullerb/eslint-plugin-regex
     'regex/invalid': [
@@ -216,14 +215,6 @@ module.exports = {
           message: '`useLayouts` composable is only allowed in @layouts & @core directory. Please use `useThemeConfig` composable instead.',
           files: {
             inspect: '^(?!.*(@core|@layouts)).*',
-          },
-        },
-        {
-          regex: 'import axios from \'axios\'',
-          replacement: 'import axios from \'@axios\'',
-          message: 'Use axios instances created in \'src/plugin/axios.ts\' instead of unconfigured axios',
-          files: {
-            ignore: '^.*plugins/axios.ts.*',
           },
         },
       ],

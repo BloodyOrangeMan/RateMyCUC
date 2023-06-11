@@ -16,13 +16,16 @@ export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'decimal', precision: 2, scale: 1 })
   difficulty: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'decimal', precision: 2, scale: 1 })
   gain: number;
-
-  @Column({ type: 'int' })
+  
+  @Column({ type: 'decimal', precision: 2, scale: 1 })
+  score : number;
+  
+  @Column({ type: 'decimal', precision: 2, scale: 1 })
   rate: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

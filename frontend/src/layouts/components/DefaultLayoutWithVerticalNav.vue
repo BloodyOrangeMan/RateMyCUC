@@ -121,27 +121,29 @@ const upgradeBanner = computed(() => {
           heading: 'User Interface',
         }"
       />
-      <!-- <VerticalNavLink
+      <!--
+        <VerticalNavLink
         :item="{
-          title: 'Typography',
-          icon: 'mdi-alpha-t-box-outline',
-          to: '/typography',
+        title: 'Typography',
+        icon: 'mdi-alpha-t-box-outline',
+        to: '/typography',
         }"
-      />
-      <VerticalNavLink
+        />
+        <VerticalNavLink
         :item="{
-          title: 'Icons',
-          icon: 'mdi-eye-outline',
-          to: '/icons',
+        title: 'Icons',
+        icon: 'mdi-eye-outline',
+        to: '/icons',
         }"
-      />
-      <VerticalNavLink
+        />
+        <VerticalNavLink
         :item="{
-          title: 'Cards',
-          icon: 'mdi-credit-card-outline',
-          to: '/cards',
+        title: 'Cards',
+        icon: 'mdi-credit-card-outline',
+        to: '/cards',
         }"
-      /> -->
+        />
+      -->
       <VerticalNavLink
         :item="{
           title: 'Courselist',
@@ -149,13 +151,15 @@ const upgradeBanner = computed(() => {
           to: '/courselist',
         }"
       />
-      <!-- <VerticalNavLink
+      <!--
+        <VerticalNavLink
         :item="{
-          title: 'Form Layouts',
-          icon: 'mdi-form-select',
-          to: '/form-layouts',
+        title: 'Form Layouts',
+        icon: 'mdi-form-select',
+        to: '/form-layouts',
         }"
-      /> -->
+        />
+      -->
     </template>
 
     <template #after-vertical-nav-items>

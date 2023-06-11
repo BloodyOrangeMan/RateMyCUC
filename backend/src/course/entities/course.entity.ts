@@ -68,14 +68,53 @@ export class Course {
   @JoinTable()
   teachers: Teacher[];
 
-  @Column({ type: 'int', default: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 2,
+    scale: 1,
+    default: 0,
+    transformer: {
+      from: (value) => parseFloat(value),
+      to: (value) => value,
+    },
+  })
   totalDifficulty: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 2,
+    scale: 1,
+    default: 0,
+    transformer: {
+      from: (value) => parseFloat(value),
+      to: (value) => value,
+    },
+  })
   totalGain: number;
 
-  @Column( 'decimal', { precision: 3, scale: 1,default: 0  })
+  @Column({
+    type: 'decimal',
+    precision: 2,
+    scale: 1,
+    default: 0,
+    transformer: {
+      from: (value) => parseFloat(value),
+      to: (value) => value,
+    },
+  })
   totalRate: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 2,
+    scale: 1,
+    default: 0,
+    transformer: {
+      from: (value) => parseFloat(value),
+      to: (value) => value,
+    },
+  })
+  totalScore: number;
 
   @Column({ type: 'int', default: 0 })
   numberOfRatings: number;

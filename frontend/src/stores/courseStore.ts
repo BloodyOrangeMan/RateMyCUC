@@ -1,13 +1,13 @@
-import axios from 'axios';
-import { defineStore } from 'pinia';
+import axios from 'axios'
+import { defineStore } from 'pinia'
 
 // Interface for the Course object
 interface Course {
-  coursename: string;
-  teacher: string;
-  rate: string;
-  numberofrating: number;
-  classID: number;
+  coursename: string
+  teacher: string
+  rate: string
+  numberofrating: number
+  classID: number
 }
 
 // Define the course store using pinia
@@ -22,17 +22,18 @@ export const useCourseStore = defineStore('course', {
       try {
         // Make a GET request to the course list API
         const response = await axios.get<Course[]>(
-          `api/courses/courseList/${departmentName}`
-        );
+          `api/courses/courseList/${departmentName}`,
+        )
 
         // If the response is successful and contains data
         if (response && response.data) {
           // Update the courseMap with the fetched course data
-          this.courseMap[departmentName] = response.data;
+          this.courseMap[departmentName] = response.data
         }
-      } catch (err) {
-        console.error(err);
+      }
+      catch (err) {
+        console.error(err)
       }
     },
   },
-});
+})

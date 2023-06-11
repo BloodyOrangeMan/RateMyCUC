@@ -34,15 +34,15 @@ export class ReviewController {
     return this.reviewService.create(createReviewDto);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get reviews' })
-  @ApiResponse({
-    status: 200,
-    description: 'The reviews have been successfully retrieved.',
-  })
-  async findAll() {
-    return this.reviewService.findAll();
-  }
+  // @Get()
+  // @ApiOperation({ summary: 'Get reviews' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'The reviews have been successfully retrieved.',
+  // })
+  // async findAll() {
+  //   return this.reviewService.findAll();
+  // }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get review by id' })

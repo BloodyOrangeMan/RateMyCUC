@@ -53,10 +53,17 @@ export class CourseService {
   }
 
   async findById(classID: number): Promise<Course> {
-    const course = await this.courseRepository.findOneBy({ classID });
+    const course = await this.courseRepository.findOne({
+      where: { classID },
+      relations: ['reviews', 'teachers'],
+    });
     if (!course) {
       throw new NotFoundException(`Course with ID ${classID} not found`);
     }
+    course.teacherName = course.teachers
+      .map((teacher) => teacher.teacherName.replace(/\(.*?\)/g, ''))
+      .join(', ');
+
     return course;
   }
 
@@ -124,9 +131,9 @@ export class CourseService {
       where: { departmentName },
       relations: ['teachers'],
     };
-  
+
     const courses = await this.courseRepository.find(options);
-  
+
     const courseList = courses
       .map((course) => {
         const rate =
@@ -134,19 +141,21 @@ export class CourseService {
             ? '暂无评分'
             : (course.totalRate / course.numberOfRatings).toFixed(1).toString();
         const numberOfRatings = course.numberOfRatings;
-  
-        const teacherNames = course.teachers.map((teacher) => teacher.teacherName.replace(/\(.*?\)/g, '')).join(', ');
-  
+
+        const teacherNames = course.teachers
+          .map((teacher) => teacher.teacherName.replace(/\(.*?\)/g, ''))
+          .join(', ');
+
         return {
           coursename: course.courseName,
           teacher: teacherNames,
           rate,
           numberofrating: numberOfRatings,
-          classID:course.classID,
+          classID: course.classID,
         };
       })
       .flat();
-  
+
     return courseList;
   }
 }
