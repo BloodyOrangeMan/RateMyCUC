@@ -2,7 +2,6 @@
 import { VDataTable } from 'vuetify/labs/VDataTable'
 import { useCourseStore } from '@/stores/courseStore'
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
-import { VDataTableFooter } from 'vuetify/labs/VDataTable'
 // Define component props
 const props = defineProps({
   departmentName: {
@@ -143,14 +142,11 @@ const handleSearch = () => {
                         <!-- Custom button content for Action column -->
                         <template v-slot:item.coursename="{ item }">
                           <div>
-                            <span>{{ item.value.coursename }}</span>
-                            <v-icon
-                              size="small"
-                              class="me-2 ml-4"
-                              icon="mdi-pencil"
-                              color="primary"
+                            <span
+                              class="course-name"
                               @click="redirectToReview(item.value.classID)"
-                            ></v-icon>
+                              >{{ item.value.coursename }}</span
+                            >
                           </div>
                         </template>
                       </v-data-table>
@@ -185,6 +181,11 @@ const handleSearch = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.course-name{
+  cursor: pointer;
+  color:#9155FD;
 }
 
 #sort-header {
