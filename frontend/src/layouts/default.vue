@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import DefaultLayoutWithVerticalNav from './components/DefaultLayoutWithVerticalNav.vue';
+import DefaultLayoutWithVerticalNav from './components/DefaultLayoutWithVerticalNav.vue'
+import ErrorPopup from '@/components/ErrorPopup.vue'
 </script>
 
 <template>
   <DefaultLayoutWithVerticalNav>
     <RouterView />
+    <ErrorPopup />
   </DefaultLayoutWithVerticalNav>
 </template>
 

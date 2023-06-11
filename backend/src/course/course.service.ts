@@ -2,12 +2,18 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, FindManyOptions } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { CreateCourseDto } from './dto/create-course-dto';
 import { Teacher } from 'src/teacher/entities/teacher.entity';
+import { CourseTag } from './entities/course-tag.entity';
+import { TagService } from './tag.service';
+import { Tag } from './entities/tag.entity';
+import { User } from 'src/user/entities/user.entity';
+import { UserUpvoteTag } from './entities/user-upvote';
 
 @Injectable()
 export class CourseService {
@@ -16,6 +22,15 @@ export class CourseService {
     private courseRepository: Repository<Course>,
     @InjectRepository(Teacher)
     private teacherRepository: Repository<Teacher>,
+    @InjectRepository(CourseTag)
+    private courseTagRepository: Repository<CourseTag>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    @InjectRepository(Tag)
+    private readonly tagRepository: Repository<Tag>,
+    @InjectRepository(UserUpvoteTag)
+    private readonly userUpvoteTagRepository: Repository<UserUpvoteTag>,
+    private readonly tagService: TagService,
   ) {}
 
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
@@ -53,16 +68,38 @@ export class CourseService {
   }
 
   async findById(classID: number): Promise<Course> {
-    const course = await this.courseRepository.findOne({
-      where: { classID },
-      relations: ['reviews', 'teachers'],
-    });
+    const course = await this.courseRepository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.reviews', 'reviews')
+      .leftJoinAndSelect('course.teachers', 'teachers')
+      .leftJoinAndSelect('course.courseTags', 'courseTags')
+      .leftJoinAndSelect('courseTags.tag', 'tag')
+      .where('course.classID = :classID', { classID })
+      .orderBy({
+        'courseTags.upvotes': 'DESC',
+        'reviews.upvoteCount': 'DESC',
+      })
+      .getOne();
+
     if (!course) {
       throw new NotFoundException(`Course with ID ${classID} not found`);
     }
+
     course.teacherName = course.teachers
       .map((teacher) => teacher.teacherName.replace(/\(.*?\)/g, ''))
       .join(', ');
+
+    // Get related courses for each teacher separately
+    for (const teacher of course.teachers) {
+      teacher.courses = await this.courseRepository
+        .createQueryBuilder('course')
+        .leftJoin('course.teachers', 'teacher')
+        .select(['course.classID', 'course.courseName'])
+        .where('teacher.id = :teacherId', { teacherId: teacher.id })
+        .andWhere('course.classID != :classID', { classID: course.classID })
+        .limit(5)
+        .getMany();
+    }
 
     return course;
   }
@@ -157,5 +194,103 @@ export class CourseService {
       .flat();
 
     return courseList;
+  }
+
+  async addTagToCourse(courseId: number, tagId: number): Promise<CourseTag> {
+    const courseTag = new CourseTag();
+    courseTag.course = await this.courseRepository.findOneBy({
+      classID: courseId,
+    });
+    courseTag.tag = await this.tagService.findById(tagId);
+    return this.courseTagRepository.save(courseTag);
+  }
+
+  async removeTagFromCourse(courseId: number, tagId: number): Promise<void> {
+    const courseTag = await this.courseTagRepository.findOne({
+      where: { courseId, tagId },
+    });
+    if (!courseTag) {
+      throw new NotFoundException(
+        `CourseTag with Course ID ${courseId} and Tag ID ${tagId} not found`,
+      );
+    }
+    await this.courseTagRepository.remove(courseTag);
+  }
+
+  async upvoteTagOnCourse(
+    userId: number,
+    courseId: number,
+    tagId: number,
+  ): Promise<CourseTag> {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: ['upvotes', 'upvotes.courseTag'],
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    const courseTag = await this.courseTagRepository.findOne({
+      where: { courseId, tagId },
+      relations: ['tag'],
+    });
+    if (!courseTag) {
+      throw new NotFoundException(
+        `CourseTag with Course ID ${courseId} and Tag ID ${tagId} not found`,
+      );
+    }
+    const hasUpvoted = user.upvotes.some(
+      (upvote) => upvote.courseTag.tagId === courseTag.tagId,
+    );
+
+    if (hasUpvoted) {
+      throw new ConflictException(`User has already upvoted this course tag.`);
+    }
+
+    await this.userUpvoteTagRepository.save({
+      user,
+      courseTag,
+    });
+
+    courseTag.upvotes++;
+    await this.courseTagRepository.save(courseTag);
+
+    courseTag.tag.totalUpvotes++;
+    await this.tagRepository.save(courseTag.tag);
+
+    return courseTag;
+  }
+
+  async createTagAndAddToCourse(
+    courseId: number,
+    tagName: string,
+  ): Promise<CourseTag> {
+    const course = await this.courseRepository.findOne({
+      where: { classID: courseId },
+      relations: ['courseTags'],
+    });
+    if (!course) {
+      throw new NotFoundException(`Course with ID ${courseId} not found`);
+    }
+
+    let tag = await this.tagRepository.findOne({ where: { name: tagName } });
+    if (!tag) {
+      tag = await this.tagRepository.save({ name: tagName });
+    }
+
+    let courseTag = await this.courseTagRepository.findOne({
+      where: { course: { classID: course.classID }, tag: { id: tag.id } },
+    });
+
+    if (courseTag) {
+      throw new ConflictException(`The tag is already added to the course.`);
+    }
+
+    courseTag = await this.courseTagRepository.save({
+      course,
+      tag,
+      upvotes: 0,
+    });
+
+    return courseTag;
   }
 }

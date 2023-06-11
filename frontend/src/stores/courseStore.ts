@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
+import { useErrorStore } from './errorStore'
 
 // Interface for the Course object
 interface Course {
@@ -31,8 +32,10 @@ export const useCourseStore = defineStore('course', {
           this.courseMap[departmentName] = response.data
         }
       }
-      catch (err) {
-        console.error(err)
+      catch (error) {
+        const errorStore = useErrorStore()
+
+        errorStore.setErrorMessage(error.message)
       }
     },
   },

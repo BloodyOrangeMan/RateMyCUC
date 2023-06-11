@@ -5,12 +5,15 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
+  AfterLoad,
 } from 'typeorm';
 // import { ContainsChinese } from '../../validators/validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Review } from '../../review/entities/review.entity';
 import { Comment } from '../../comment/entities/comment.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
+import { CourseTag } from './course-tag.entity';
+import { Tag } from './tag.entity';
 
 @Entity()
 export class Course {
@@ -118,4 +121,16 @@ export class Course {
 
   @Column({ type: 'int', default: 0 })
   numberOfRatings: number;
+
+  @OneToMany(() => CourseTag, (courseTag) => courseTag.course)
+  courseTags: CourseTag[];
+
+  tags: Tag[];
+
+  @AfterLoad()
+  _convertTags() {
+    this.tags = this.courseTags
+      ? this.courseTags.map((courseTag) => courseTag.tag)
+      : [];
+  }
 }

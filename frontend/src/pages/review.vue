@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useReviewStore } from '../stores/reviewStore'
 
+const route = useRoute()
+const classID = parseInt(route.params.classID as string)
+
 const content = ref('')
 const outlined = ref(true)
 const dense = ref(false)
@@ -9,42 +12,63 @@ const disableToolbar = ref(false)
 const errorMessages = ref(null)
 const maxWidth = ref<number>(900)
 
+const newTagDialog = ref(false)
+const newTag = ref('')
+
 const rating = ref(0)
 const dialog = ref(false)
 const isCardDetailsVisible = ref(false)
 
 const reviewStore = useReviewStore()
 
-onMounted(() => {
-  reviewStore.fetchCourse(1) // replace this with the actual id of the course
+onMounted(async() => {
+  await reviewStore.fetchCourse(classID) // replace this with the actual id of the course
 })
 
-const comments = [{
-  text: '牛逼',
-  user: 'lsj',
-},
-{
-  text: '牛逼',
-  user: 'lsj',
-},
-{
-  text: '牛逼',
-  user: 'lsj',
-},
-{
-  text: '牛逼',
-  user: 'lsj',
-},
-{
-  text: '牛逼',
-  user: 'lsj',
-}]
+const randomCourses = computed(() => {
+  return reviewStore.course?.teachers.flatMap(teacher => teacher.courses)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 6)
+})
+
+const submitTag = () => {
+  useReviewStore().addTag(classID, newTag.value)
+  newTag.value = ''
+  dialog.value = false
+}
+
+
+const comments = [
+  {
+    text: '牛逼',
+    user: 'lsj',
+  },
+  {
+    text: '牛逼',
+    user: 'lsj',
+  },
+  {
+    text: '牛逼',
+    user: 'lsj',
+  },
+  {
+    text: '牛逼',
+    user: 'lsj',
+  },
+  {
+    text: '牛逼',
+    user: 'lsj',
+  },
+]
 </script>
 
 <template>
-  <VRow>
+  <VRow class="match-height">
     <!-- 👉 course overview here -->
-    <VCol cols="12">
+    <VCol
+      cols="12"
+      md="8"
+    >
       <VCard>
         <div class="d-flex justify-space-between flex-wrap flex-md-nowrap flex-column flex-md-row">
           <div>
@@ -139,7 +163,7 @@ const comments = [{
             </VCardText>
           </div>
           <div class="ma-auto pa-5">
-            <div class="d-flex justify-center mt-auto text-h5 ">
+            <div class="d-flex justify-center mt-auto text-h5">
               总分
             </div>
             <div class="d-flex align-center flex-column my-auto">
@@ -191,6 +215,90 @@ const comments = [{
                 <span class="d-flex justify-end"> {{ rating * 224 }} </span>
               </div>
             </template>
+          </VListItem>
+        </VList>
+      </VCard>
+    </VCol>
+    <VCol
+      cols="12"
+      md="4"
+    >
+      <VCard class="d-flex flex-column">
+        <VCardItem>
+          <VCardTitle> Tags </VCardTitle>
+        </VCardItem>
+        <div class="d-flex flex-wrap">
+          <VChip
+            v-for="(courseTag, index) in reviewStore.course?.courseTags"
+            :key="index"
+            color="primary"
+            class="ma-2"
+            size="x-large"
+            @click="reviewStore.upvoteTag(reviewStore.course?.classID ?? 0, courseTag.tag.id)"
+          >
+            {{ courseTag.tag.name }} ({{ courseTag.upvotes }})
+          </VChip>
+        </div>
+        <VCardActions class="align-self-end">
+          <VBtn @click="newTagDialog = true">
+            添加 Tag
+          </VBtn>
+        </VCardActions>
+
+        <VDialog
+          v-model="newTagDialog"
+          persistent
+          max-width="600px"
+        >
+          <VCard>
+            <VCardTitle>
+              <span class="headline">添加一个新的 Tag</span>
+            </VCardTitle>
+
+            <VCardText>
+              <VTextField
+                v-model="newTag"
+                label="Tag"
+                required
+              />
+            </VCardText>
+
+            <VCardActions>
+              <VSpacer />
+              <VBtn
+                color="blue darken-1"
+                @click="newTagDialog = false"
+              >
+                Close
+              </VBtn>
+              <VBtn
+                color="blue darken-1"
+                @click="submitTag"
+              >
+                Save
+              </VBtn>
+            </VCardActions>
+          </VCard>
+        </VDialog>
+
+        <VDivider />
+
+        <!-- 👉 related course  -->
+        <VCardItem>
+          <VCardTitle> 相关课程 </VCardTitle>
+        </VCardItem>
+
+        <VList>
+          <VListItem
+            v-for="(course, index) in randomCourses"
+            :key="`course-${index}`"
+            :to="`/review/${course.classID}`"
+            router-link
+            color="primary"
+          >
+            <VListItemText>
+              {{ course.courseName }}
+            </VListItemText>
           </VListItem>
         </VList>
       </VCard>
@@ -423,29 +531,29 @@ const comments = [{
 
 <style lang="scss" scoped>
 .avatar-center {
-    position: absolute;
-    border: 3px solid rgb(var(--v-theme-surface));
-    inset-block-start: -2rem;
-    inset-inline-start: 1rem;
+  position: absolute;
+  border: 3px solid rgb(var(--v-theme-surface));
+  inset-block-start: -2rem;
+  inset-inline-start: 1rem;
 }
 
 // membership pricing
 .member-pricing-bg {
-    position: relative;
-    background-color: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));
+  position: relative;
+  background-color: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));
 }
 
 .membership-pricing {
-    sup {
-        inset-block-start: 9px;
-    }
+  sup {
+    inset-block-start: 9px;
+  }
 }
 
 .fixed-button {
-    position: fixed;
-    // To keep upgrade to pro button on top of v-layout
-    z-index: 999;
-    inset-block-end: 5%;
-    inset-inline-end: 79px;
+  position: fixed;
+  // To keep upgrade to pro button on top of v-layout
+  z-index: 999;
+  inset-block-end: 5%;
+  inset-inline-end: 79px;
 }
 </style>

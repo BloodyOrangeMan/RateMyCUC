@@ -6,6 +6,8 @@ import { Teacher } from 'src/teacher/entities/teacher.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { TypeORMSession } from 'src/auth/entities/session.entity';
+import { Tag } from 'src/course/entities/tag.entity';
+import { CourseTag } from 'src/course/entities/course-tag.entity';
 
 @Module({
   imports: [
@@ -16,7 +18,16 @@ import { TypeORMSession } from 'src/auth/entities/session.entity';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'mysecretpassword',
       database: process.env.DB_DATABASE || 'test',
-      entities: [User, Course, Teacher, Review, Comment, TypeORMSession],
+      entities: [
+        User,
+        Course,
+        Teacher,
+        Review,
+        Comment,
+        Tag,
+        CourseTag,
+        TypeORMSession,
+      ],
       synchronize: true,
       autoLoadEntities: true,
     }),

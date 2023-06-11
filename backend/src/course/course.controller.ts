@@ -6,7 +6,8 @@ import {
   Param,
   Put,
   Delete,
-  Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,9 +15,13 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
+  ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { CourseService } from './course.service';
 import { Course } from './entities/course.entity';
+import { CourseTag } from './entities/course-tag.entity';
+import { CreateTagDto } from './dto/create-tag-dto';
+import { LoggedInGuard } from 'src/auth/guards/local.guard';
 
 @Controller('courses')
 @ApiTags('courses')
@@ -47,7 +52,7 @@ export class CourseController {
     return this.courseService.findAll();
   }
 
-  @Get('id/:id')
+  @Get(':id')
   @ApiOperation({ summary: 'Get course by ID' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({
@@ -137,5 +142,68 @@ export class CourseController {
     @Param('departmentName') departmentName: string,
   ): Promise<Course[]> {
     return this.courseService.findCourseList(departmentName);
+  }
+
+  @ApiOperation({ summary: 'Add a tag to a course' })
+  @ApiParam({
+    name: 'courseId',
+    description: 'The ID of the course',
+    example: 1,
+  })
+  @ApiParam({ name: 'tagId', description: 'The ID of the tag', example: 1 })
+  @ApiCreatedResponse({
+    description: 'The tag has been successfully added to the course.',
+    type: CourseTag, // Make sure the CourseTag entity has appropriate ApiProperty decorators
+  })
+  @Post(':courseId/tags/:tagId')
+  addTagToCourse(
+    @Param('courseId') courseId: number,
+    @Param('tagId') tagId: number,
+  ): Promise<CourseTag> {
+    return this.courseService.addTagToCourse(courseId, tagId);
+  }
+
+  @Delete(':courseId/tags/:tagId')
+  removeTagFromCourse(
+    @Param('courseId') courseId: number,
+    @Param('tagId') tagId: number,
+  ): Promise<void> {
+    return this.courseService.removeTagFromCourse(courseId, tagId);
+  }
+  /* 👉 upvoteTagOnCourse */
+  @Post(':courseId/tags/:tagId/upvote')
+  @UseGuards(LoggedInGuard)
+  upvoteTagOnCourse(
+    @Param('courseId') courseId: number,
+    @Param('tagId') tagId: number,
+    @Request() req,
+  ): Promise<CourseTag> {
+    return this.courseService.upvoteTagOnCourse(req.user.id, courseId, tagId);
+  }
+  /* 👉 createTagAndAddToCourse */
+  @ApiOperation({ summary: 'Create a tag and add it to a course' })
+  @ApiParam({
+    name: 'courseId',
+    description: 'The ID of the course',
+    example: 1,
+  })
+  @ApiBody({
+    description: 'The name of the tag to be created and added',
+    type: CreateTagDto,
+  })
+  @ApiCreatedResponse({
+    description:
+      'The tag has been successfully created and added to the course.',
+    type: CourseTag, // Make sure the CourseTag entity has appropriate ApiProperty decorators
+  })
+  @Post(':courseId/tags')
+  createTagAndAddToCourse(
+    @Param('courseId') courseId: number,
+    @Body() createTagDto: CreateTagDto,
+  ): Promise<CourseTag> {
+    return this.courseService.createTagAndAddToCourse(
+      courseId,
+      createTagDto.tagName,
+    );
   }
 }

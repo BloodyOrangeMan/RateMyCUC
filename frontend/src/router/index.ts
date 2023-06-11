@@ -37,9 +37,10 @@ const router = createRouter({
           component: () => import('../pages/form-layouts.vue'),
         },
         {
-          path: 'review',
+          path: '/review/:classID',
+          name: 'Review',
           component: () => import('../pages/review.vue'),
-        }
+        },
       ],
     },
     {

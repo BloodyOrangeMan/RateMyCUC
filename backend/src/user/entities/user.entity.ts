@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToMany,
 } from 'typeorm';
+import { UserUpvoteTag } from 'src/course/entities/user-upvote';
 
 @Entity()
 export class User {
@@ -39,4 +40,7 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.downvoteUser)
   downvotedComments: Comment[];
+
+  @OneToMany(() => UserUpvoteTag, (userUpvote) => userUpvote.user)
+  upvotes: UserUpvoteTag[];
 }

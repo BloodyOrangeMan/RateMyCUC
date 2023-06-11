@@ -37,7 +37,11 @@ export class AuthController {
       if (result.user) {
         req.login(result.user, function (err) {
           if (err) {
-            reject(new Error('Sorry, something went wrong. We could register but not sign you in.'));
+            reject(
+              new Error(
+                'Sorry, something went wrong. We could register but not sign you in.',
+              ),
+            );
           } else {
             resolve(req.session);
           }

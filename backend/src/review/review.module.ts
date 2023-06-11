@@ -7,10 +7,11 @@ import { UsersModule } from '../user/user.module';
 import { CourseModule } from '../course/course.module';
 import { User } from 'src/user/entities/user.entity';
 import { Course } from 'src/course/entities/course.entity';
+import { UserUpvoteTag } from 'src/course/entities/user-upvote';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Review, User, Course]),
+    TypeOrmModule.forFeature([Review, User, Course, UserUpvoteTag]),
     UsersModule,
     CourseModule,
   ],
