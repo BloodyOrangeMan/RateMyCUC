@@ -1,6 +1,5 @@
-import axios from 'axios'
 import { defineStore } from 'pinia'
-import { useErrorStore } from './errorStore'
+import axiosInstance from '../plugins/axios/axios'
 
 interface Review {
   id: number
@@ -80,32 +79,17 @@ export const useReviewStore = defineStore({
   },
   actions: {
     async fetchCourse(id: number) {
-      const response = await axios.get(`/api/courses/${id}`)
+      const response = await axiosInstance.get(`/api/courses/${id}`)
 
       this.course = await response.data
     },
     async upvoteTag(courseId: number, tagId: number) {
-      try {
-        await axios.post(`/api/courses/${courseId}/tags/${tagId}/upvote`)
-
-        await this.fetchCourse(courseId)
-      }
-      catch (error) {
-        const errorStore = useErrorStore()
-
-        errorStore.setErrorMessage(error.message)
-      }
+      await axiosInstance.post(`/api/courses/${courseId}/tags/${tagId}/upvote`)
+      await this.fetchCourse(courseId)
     },
     async addTag(courseId: number, tagName: string) {
-      try {
-        await axios.post(`/api/courses/${courseId}/tags`, { tagName })
-        await this.fetchCourse(courseId)
-      }
-      catch (error) {
-        const errorStore = useErrorStore()
-
-        errorStore.setErrorMessage(error.message)
-      }
+      await axiosInstance.post(`/api/courses/${courseId}/tags`, { tagName })
+      await this.fetchCourse(courseId)
     },
   },
 })

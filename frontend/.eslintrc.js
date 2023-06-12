@@ -202,7 +202,6 @@ module.exports = {
         //   regex: 'tabler-\\w',
         //   message: 'Only \'mdi\' icons are allowed',
         // },
-
         {
           regex: '@core/\\w',
           message: 'You can\'t use @core when you are in @layouts module',

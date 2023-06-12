@@ -21,7 +21,15 @@ const isCardDetailsVisible = ref(false)
 
 const reviewStore = useReviewStore()
 
-onMounted(async() => {
+watch(
+  () => parseInt(route.params.classID as string),
+  async (newClassID: number | undefined) => {
+    if (newClassID)
+      await reviewStore.fetchCourse(newClassID)
+  },
+  { immediate: true },
+)
+onMounted(async () => {
   await reviewStore.fetchCourse(classID) // replace this with the actual id of the course
 })
 
@@ -36,7 +44,6 @@ const submitTag = () => {
   newTag.value = ''
   dialog.value = false
 }
-
 
 const comments = [
   {

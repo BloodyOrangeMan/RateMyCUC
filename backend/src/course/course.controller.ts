@@ -8,6 +8,7 @@ import {
   Delete,
   Request,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -61,6 +62,10 @@ export class CourseController {
     type: Course,
   })
   async findById(@Param('id') id: number): Promise<Course> {
+    const parsedId = Number(id);
+    if (isNaN(parsedId)) {
+      throw new NotFoundException(`Invalid id: ${id}`);
+    }
     return this.courseService.findById(id);
   }
 

@@ -1,6 +1,5 @@
-import axios from 'axios'
 import { defineStore } from 'pinia'
-import { useErrorStore } from './errorStore'
+import axiosInstance from '../plugins/axios/axios'
 
 // Interface for the Course object
 interface Course {
@@ -20,22 +19,15 @@ export const useCourseStore = defineStore('course', {
   actions: {
     // Fetch the course list for a specific department
     async fetchCourseListByDepartment(departmentName: string) {
-      try {
-        // Make a GET request to the course list API
-        const response = await axios.get<Course[]>(
-          `api/courses/courseList/${departmentName}`,
-        )
+      // Make a GET request to the course list API
+      const response = await axiosInstance.get<Course[]>(
+        `api/courses/courseList/${departmentName}`,
+      )
 
-        // If the response is successful and contains data
-        if (response && response.data) {
-          // Update the courseMap with the fetched course data
-          this.courseMap[departmentName] = response.data
-        }
-      }
-      catch (error) {
-        const errorStore = useErrorStore()
-
-        errorStore.setErrorMessage(error.message)
+      // If the response is successful and contains data
+      if (response && response.data) {
+        // Update the courseMap with the fetched course data
+        this.courseMap[departmentName] = response.data
       }
     },
   },
