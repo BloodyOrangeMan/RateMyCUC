@@ -142,11 +142,13 @@ const handleSearch = () => {
                         <!-- Custom button content for Action column -->
                         <template v-slot:item.coursename="{ item }">
                           <div>
-                            <span
+                            <a
                               class="course-name"
                               @click="redirectToReview(item.value.classID)"
-                              >{{ item.value.coursename }}</span
+                              :title="'点击跳转至课程'"
                             >
+                              {{ item.value.coursename }}
+                            </a>
                           </div>
                         </template>
                       </v-data-table>
@@ -183,9 +185,9 @@ const handleSearch = () => {
   justify-content: center;
 }
 
-.course-name{
+.course-name {
   cursor: pointer;
-  color:#9155FD;
+  color: #9155fd;
 }
 
 #sort-header {
