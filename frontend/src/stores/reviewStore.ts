@@ -38,7 +38,7 @@ interface SimplifyCourse {
   courseName: string
   tags: []
 }
-interface Course {
+export interface Course {
   classID: number
   courseNumber: string
   courseName: string
@@ -71,7 +71,9 @@ export const useReviewStore = defineStore({
       return (state.course?.totalGain ?? 0) / (state.course?.numberOfRatings ?? 1)
     },
     averageRate(state) {
-      return (state.course?.totalRate ?? 0) / (state.course?.numberOfRatings ?? 1)
+      const average = (state.course?.totalRate ?? 0) / (state.course?.numberOfRatings ?? 1)
+
+      return isNaN(average) ? 0 : average.toFixed(1)
     },
     averageScore(state) {
       return (state.course?.totalScore ?? 0) / (state.course?.numberOfRatings ?? 1)
@@ -89,6 +91,19 @@ export const useReviewStore = defineStore({
     },
     async addTag(courseId: number, tagName: string) {
       await axiosInstance.post(`/api/courses/${courseId}/tags`, { tagName })
+      await this.fetchCourse(courseId)
+    },
+    async submitReview(courseId: number, authorId: number, difficulty: number, gain: number, rate: number, score: number, content: string, title: string) {
+      await axiosInstance.post('/api/reviews', {
+        courseId,
+        authorId,
+        difficulty,
+        gain,
+        rate,
+        score,
+        content,
+        title,
+      })
       await this.fetchCourse(courseId)
     },
   },

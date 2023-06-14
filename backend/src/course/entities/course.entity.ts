@@ -73,7 +73,7 @@ export class Course {
 
   @Column({
     type: 'decimal',
-    precision: 2,
+    precision: 100,
     scale: 1,
     default: 0,
     transformer: {
@@ -85,7 +85,7 @@ export class Course {
 
   @Column({
     type: 'decimal',
-    precision: 2,
+    precision: 100,
     scale: 1,
     default: 0,
     transformer: {
@@ -97,7 +97,7 @@ export class Course {
 
   @Column({
     type: 'decimal',
-    precision: 2,
+    precision: 100,
     scale: 1,
     default: 0,
     transformer: {
@@ -109,7 +109,7 @@ export class Course {
 
   @Column({
     type: 'decimal',
-    precision: 2,
+    precision: 100,
     scale: 1,
     default: 0,
     transformer: {

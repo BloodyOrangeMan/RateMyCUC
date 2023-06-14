@@ -2,6 +2,27 @@
 import { useReviewStore } from '../../../stores/reviewStore'
 
 const reviewStore = useReviewStore()
+
+const reviews = computed(() => reviewStore.course?.reviews)
+
+const ratingsData = computed(() => {
+  const counts: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+  let totalReviews = 0
+  if (reviews.value) {
+    totalReviews = reviews.value.length
+    reviews.value.forEach(review => {
+      const rating = Math.round(Number(review.rate))
+      if (counts[rating] !== undefined)
+        counts[rating]++
+    })
+  }
+
+  const percentages: { [key: number]: number } = {}
+  for (const rating in counts)
+    percentages[rating] = totalReviews ? (counts[rating] / totalReviews) * 100 : 0
+
+  return { counts, percentages }
+})
 </script>
 
 <template>
@@ -104,7 +125,7 @@ const reviewStore = useReviewStore()
         </div>
         <div class="d-flex align-center flex-column my-auto">
           <div class="text-h2 mt-5">
-            {{ reviewStore.course?.totalRate }}
+            {{ reviewStore.averageRate }}
             <span class="text-h6 ml-n3">/5</span>
           </div>
 
@@ -126,11 +147,11 @@ const reviewStore = useReviewStore()
       density="compact"
     >
       <VListItem
-        v-for="(rating, i) in 5"
-        :key="i"
+        v-for="(data, rating) in ratingsData.percentages"
+        :key="rating"
       >
         <VProgressLinear
-          :model-value="rating * 15"
+          :model-value="data"
           class="mx-n5"
           color="#F57F17"
           height="20"
@@ -138,7 +159,7 @@ const reviewStore = useReviewStore()
         />
 
         <template #prepend>
-          <span>{{ rating }}</span>
+          <span class="rating-number">{{ rating }}</span>
           <VIcon
             icon="mdi-star"
             class="mx-3"
@@ -148,10 +169,18 @@ const reviewStore = useReviewStore()
 
         <template #append>
           <div class="rating-values">
-            <span class="d-flex justify-end"> {{ rating * 224 }} </span>
+            <span class="d-flex justify-end rating-number">{{ ratingsData.counts[rating] }}</span>
           </div>
         </template>
       </VListItem>
     </VList>
   </VCard>
 </template>
+
+<style>
+.rating-number {
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+}
+</style>

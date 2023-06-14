@@ -71,6 +71,7 @@ export class CourseService {
     const course = await this.courseRepository
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.reviews', 'reviews')
+      .leftJoinAndSelect('reviews.author', 'author') // 修改了这一行
       .leftJoinAndSelect('course.teachers', 'teachers')
       .leftJoinAndSelect('course.courseTags', 'courseTags')
       .leftJoinAndSelect('courseTags.tag', 'tag')
@@ -100,6 +101,10 @@ export class CourseService {
         .limit(5)
         .getMany();
     }
+
+    course.reviews.map((review) => {
+      delete review.author.password;
+    });
 
     return course;
   }

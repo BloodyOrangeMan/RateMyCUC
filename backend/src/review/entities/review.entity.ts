@@ -21,10 +21,10 @@ export class Review {
 
   @Column({ type: 'decimal', precision: 2, scale: 1 })
   gain: number;
-  
+
   @Column({ type: 'decimal', precision: 2, scale: 1 })
-  score : number;
-  
+  score: number;
+
   @Column({ type: 'decimal', precision: 2, scale: 1 })
   rate: number;
 
@@ -36,6 +36,9 @@ export class Review {
 
   @Column({ type: 'text' })
   content: string;
+
+  @Column({ type: 'text' })
+  title: string;
 
   @ManyToMany(() => User)
   @JoinTable()
