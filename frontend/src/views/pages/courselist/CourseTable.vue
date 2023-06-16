@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { VDataTable } from 'vuetify/labs/VDataTable'
-import { useCourseStore } from '@/stores/courseStore'
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
+
+import { useCourseStore } from '@/stores/courseStore'
+
 // Define component props
 const props = defineProps({
   departmentName: {
@@ -9,13 +11,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-import { useRouter } from 'vue-router'
-const router = useRouter()
-// Redirect to review page
-const redirectToReview = (classID: number) => {
-  router.push(`/review/${classID}`)
-}
 
 // Define table headers
 const headers = [
@@ -26,7 +21,7 @@ const headers = [
 ]
 
 // Search text
-let searchText = ''
+const searchText = ''
 
 // Loading state
 const loading = ref(true)
@@ -47,9 +42,8 @@ const fetchCourseList = async () => {
 // Toggle card details visibility
 const toggleCardDetails = () => {
   isCardDetailsVisible.value = !isCardDetailsVisible.value
-  if (isCardDetailsVisible.value) {
+  if (isCardDetailsVisible.value)
     fetchCourseList().then(() => {})
-  }
 }
 
 const itemsPerPageText = '每页课程数：'
@@ -58,10 +52,12 @@ const itemsPerPageText = '每页课程数：'
 const filteredItems = computed(() => {
   if (searchText) {
     const searchTerm = searchText.toLowerCase()
+
     return courseStore.courseMap[props.departmentName].filter(
       item => item.coursename.toLowerCase().includes(searchTerm) || item.teacher.toLowerCase().includes(searchTerm),
     )
-  } else {
+  }
+  else {
     return courseStore.courseMap[props.departmentName]
   }
 })
@@ -85,7 +81,9 @@ const handleSearch = () => {
         </VCardItem>
         <VCardActions>
           <!-- Toggle card details button -->
-          <VBtn @click="toggleCardDetails">Details</VBtn>
+          <VBtn @click="toggleCardDetails">
+            Details
+          </VBtn>
 
           <VSpacer />
 
@@ -104,25 +102,25 @@ const handleSearch = () => {
           <div v-show="isCardDetailsVisible">
             <VDivider />
             <div class="table-wrapper">
-              <v-skeleton-loader
+              <VSkeletonLoader
                 v-if="loading"
                 class="loader-overlay"
               >
-                <div id="loading-bg"></div>
+                <div id="loading-bg" />
                 <div class="loading-logo">
                   <div class="loading">
-                    <div class="effect-1"></div>
-                    <div class="effect-2"></div>
-                    <div class="effect-3"></div>
+                    <div class="effect-1" />
+                    <div class="effect-2" />
+                    <div class="effect-3" />
                   </div>
                 </div>
-              </v-skeleton-loader>
+              </VSkeletonLoader>
               <VTable v-if="!loading">
                 <tbody>
                   <tr>
                     <!-- Data table -->
                     <td>
-                      <v-text-field
+                      <VTextField
                         v-model="searchText"
                         variant="solo"
                         label="输入搜索 课程/老师名"
@@ -130,28 +128,24 @@ const handleSearch = () => {
                         single-line
                         hide-details
                         @input="handleSearch"
-                      ></v-text-field>
-                      <v-data-table
+                      />
+                      <VDataTable
+                        id="sort-header"
                         :search="searchText"
                         :headers="headers"
                         :items="filteredItems"
                         :items-per-page="10"
                         class="elevation-1"
-                        id="sort-header"
                       >
                         <!-- Custom button content for Action column -->
-                        <template v-slot:item.coursename="{ item }">
+                        <template #item.coursename="{ item }">
                           <div>
-                            <a
-                              class="course-name"
-                              @click="redirectToReview(item.value.classID)"
-                              :title="'点击跳转至课程'"
-                            >
+                            <RouterLink :to="`/review/${item.value.classID}`">
                               {{ item.value.coursename }}
-                            </a>
+                            </RouterLink>
                           </div>
                         </template>
-                      </v-data-table>
+                      </VDataTable>
                     </td>
                   </tr>
                 </tbody>

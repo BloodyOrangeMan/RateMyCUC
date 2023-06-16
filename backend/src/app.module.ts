@@ -12,6 +12,7 @@ import { TeacherModule } from './teacher/teacher.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { SanitizeMiddleware } from './middlewares/sanitize.middleware';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SanitizeMiddleware } from './middlewares/sanitize.middleware';
     ReviewModule,
     CommentModule,
     TeacherModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

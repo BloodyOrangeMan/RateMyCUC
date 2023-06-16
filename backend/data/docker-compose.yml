@@ -1,0 +1,56 @@
+version: '3.7'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "6543:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: zombo
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+    container_name: elasticsearch
+    ports: 
+      - "9200:9200"
+    environment:
+      - ELASTIC_PASSWORD=123change...     
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+    networks:
+      - mynetwork
+  
+  kibana:
+      image: docker.elastic.co/kibana/kibana:8.8.1
+      container_name: kibana
+      ports: 
+        - "5601:5601"
+      environment:
+        - ELASTICSEARCH_USERNAME=kibana
+        - ELASTICSEARCH_PASSWORD="123change..."
+        - ELASTICSEARCH_URL=http://elasticsearch:9200
+        - SERVER_NAME=my-kibana
+        - XPACK_SECURITY_ENABLED=true
+      links:
+        - elasticsearch
+      depends_on:
+        - elasticsearch
+      networks:
+        - mynetwork
+
+volumes:
+  dbdata:
+  esdata:
+
+networks:
+  mynetwork:
+    driver: bridge

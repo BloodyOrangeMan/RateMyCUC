@@ -41,6 +41,7 @@ const comments = [
           <VRating
             :model-value="review.rate"
             readonly
+            half-increments
             density="compact"
             class="me-3"
           />

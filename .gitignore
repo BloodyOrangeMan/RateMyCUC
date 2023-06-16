@@ -36,3 +36,6 @@ src/@iconify/*.js
 /coverage
 /.nyc_output
 
+# database
+*.sql
+*.csv

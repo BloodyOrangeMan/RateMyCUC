@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import axiosInstance from '../plugins/axios/axios'
 
 // Interface for the Course object
-interface Course {
+export interface Course {
   coursename: string
   teacher: string
   rate: string
@@ -29,6 +29,11 @@ export const useCourseStore = defineStore('course', {
         // Update the courseMap with the fetched course data
         this.courseMap[departmentName] = response.data
       }
+    },
+    async fetchSearchResult(queryString: string, page: number, limit: number) {
+      const response = await axiosInstance.get('api/search/', { params: { keyword: queryString, page, limit } })
+      if (response && response.data)
+        return response.data
     },
   },
 })
