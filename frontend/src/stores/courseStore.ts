@@ -15,6 +15,7 @@ export const useCourseStore = defineStore('course', {
   state: () => ({
     // Object to store course data by department
     courseMap: {} as Record<string, Course[]>,
+    suggestions: [] as string [],
   }),
   actions: {
     // Fetch the course list for a specific department
@@ -34,6 +35,31 @@ export const useCourseStore = defineStore('course', {
       const response = await axiosInstance.get('api/search/', { params: { keyword: queryString, page, limit } })
       if (response && response.data)
         return response.data
+    },
+    async fetchSuggestion(queryString: string) {
+      const response = await axiosInstance.get('api/search/suggest', { params: { term: queryString } })
+      if (response && response.data) {
+        const result = response.data
+        const results = []
+
+        const courseSuggestions = result['course-suggestion']
+        if (courseSuggestions.length > 0) {
+          const courseOptions = courseSuggestions[0].options
+          const courseTexts = courseOptions.map((option: { text: string }) => option.text)
+
+          results.push(...courseTexts)
+        }
+
+        // 处理 teacher-suggestion
+        const teacherSuggestions = result['teacher-suggestion']
+        if (teacherSuggestions.length > 0) {
+          const teacherOptions = teacherSuggestions[0].options
+          const teacherTexts = teacherOptions.map((option: { text: string }) => option.text)
+
+          results.push(...teacherTexts)
+        }
+        this.suggestions = results
+      }
     },
   },
 })

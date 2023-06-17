@@ -34,10 +34,12 @@ const loadItems = async (page: number, itemsPerPage: number) => {
   try {
     loading.value = true
 
-    const result = await courseStore.fetchSearchResult(keyword.value, page, itemsPerPage)
-    if (result) {
-      serverItems.value = result.courseList
-      totalItems.value = parseInt(result.totalItems[0].total)
+    if (keyword.value) {
+      const result = await courseStore.fetchSearchResult(keyword.value, page, itemsPerPage)
+      if (result) {
+        serverItems.value = result.courseList
+        totalItems.value = parseInt(result.totalItems[0].total)
+      }
     }
     loading.value = false
   }
