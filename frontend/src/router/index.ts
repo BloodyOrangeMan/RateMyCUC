@@ -51,6 +51,11 @@ const router = createRouter({
           name: 'Review',
           component: () => import('../pages/review.vue'),
         },
+        {
+          path: 'profile',
+          name: 'Profile',
+          component: () => import('../pages/profile.vue'),
+        },
       ],
     },
     {
