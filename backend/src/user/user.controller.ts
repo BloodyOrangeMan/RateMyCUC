@@ -9,6 +9,7 @@ import {
   ApiBadRequestResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { LoggedInGuard } from '../auth/guards/local.guard'
 
 @ApiTags('user')
 @Controller('user')
@@ -16,8 +17,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('profile')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiOkResponse({ type: User/mnt/c/Users/86136/Desktop/RateMyCUC/frontend/src/views/pages/courselist })
+  @UseGuards(LoggedInGuard)
+  @ApiOkResponse({ type: User, description: 'get profile' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   getUserProfile(@Req() req): Promise<User> {
     const userId = req.user.id;
@@ -25,7 +26,7 @@ export class UserController {
   }
 
   @Put('email')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(LoggedInGuard)
   @ApiOkResponse({ type: User, description: ' update email' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -38,7 +39,7 @@ export class UserController {
   }
 
   @Put('username')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(LoggedInGuard)
   @ApiOkResponse({ type: User, description: ' update username' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
@@ -51,7 +52,7 @@ export class UserController {
   }
 
   @Put('password')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(LoggedInGuard)
   @ApiOkResponse({ type: User, description: ' update password' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
