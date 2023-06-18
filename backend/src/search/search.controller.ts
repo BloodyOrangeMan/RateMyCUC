@@ -32,7 +32,7 @@ export class SearchController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    const minScore = 5;
+    const minScore = 8;
     const result = await this.searchService.searchCourse(
       keyword,
       minScore,
@@ -40,5 +40,33 @@ export class SearchController {
       limit,
     );
     return result;
+  }
+
+  @ApiOperation({ summary: 'Get course suggestions' })
+  @ApiQuery({
+    name: 'term',
+    description: 'Search term',
+    required: true,
+    type: String,
+  })
+  @Get('/suggest')
+  async suggest(@Query('term') q: string) {
+    const result = await this.searchService.suggest('course_suggest', {
+      suggest: {
+        'teacher-suggestion': {
+          prefix: q,
+          completion: {
+            field: 'teacherName_suggest',
+          },
+        },
+        'course-suggestion': {
+          prefix: q,
+          completion: {
+            field: 'courseName_suggest',
+          },
+        },
+      },
+    });
+    return result.suggest;
   }
 }

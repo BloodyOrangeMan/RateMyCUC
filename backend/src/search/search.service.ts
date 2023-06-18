@@ -2,13 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from 'src/course/entities/course.entity';
 import { Repository } from 'typeorm';
+import { Client } from '@elastic/elasticsearch';
 
 @Injectable()
 export class SearchService {
+  private readonly client: Client;
+
   constructor(
     @InjectRepository(Course)
     private readonly courseRepository: Repository<Course>,
-  ) {}
+  ) {
+    this.client = new Client({
+      node: 'http://localhost:9200',
+      auth: {
+        username: process.env.ES_USERNAME || 'elastic',
+        password: process.env.ES_PASSWORD || '123change...',
+      },
+    });
+  }
 
   async searchCourse(
     keyword: string,
@@ -68,5 +79,13 @@ export class SearchService {
       .flat();
 
     return { courseList, totalItems };
+  }
+
+  async suggest(index: string, body: Record<string, any>) {
+    const result = await this.client.search({
+      index,
+      body,
+    });
+    return result;
   }
 }
