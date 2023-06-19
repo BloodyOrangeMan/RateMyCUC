@@ -1,54 +1,100 @@
 <script lang="ts" setup>
 import { useTheme } from 'vuetify'
-
-import upgradeBannerDark from '@images/pro/upgrade-banner-dark.png'
-import upgradeBannerLight from '@images/pro/upgrade-banner-light.png'
+import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
-import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
 
 // Components
 import Footer from '@/layouts/components/Footer.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
 
-// Banner
+// Search
+import { useCourseStore } from '@/stores/courseStore'
+import router from '@/router'
 
 const vuetifyTheme = useTheme()
 
-const upgradeBanner = computed(() => {
-  return vuetifyTheme.global.name.value === 'light' ? upgradeBannerLight : upgradeBannerDark
-})
+const courseStore = useCourseStore()
+
+const items = ref([] as string[])
+const values = ref('')
+
+let timerId: ReturnType<typeof setTimeout> | null = null
+
+const fetchSuggestions = async (value: string) => {
+  await courseStore.fetchSuggestion(value)
+  items.value = courseStore.suggestions
+}
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === 'Enter')
+    router.push(`/search?keyword=${values.value}`).then(() => {
+      newDialog.value = false
+    })
+}
+
+watch(
+  values,
+  newValue => {
+    if (timerId) clearTimeout(timerId)
+
+    timerId = setTimeout(() => {
+      fetchSuggestions(newValue)
+    }, 500)
+  },
+  { immediate: true },
+)
+
+const newDialog = ref(false)
 </script>
 
 <template>
+  <VDialog v-model="newDialog" max-width="600px">
+    <VCard style="background-color: transparent;">
+      <VResponsive max-width="600px">
+        <VAutocomplete
+          v-model:search="values"
+          :items="items"
+          auto-select-first
+          class="flex-full-width"
+          density="comfortable"
+          menu-icon=""
+          placeholder="按课程/老师..."
+          prepend-inner-icon="mdi-magnify"
+          rounded
+          theme="light"
+          variant="solo"
+          @keydown="handleKeyDown"
+        />
+      </VResponsive>
+    </VCard>
+  </VDialog>
+
   <VerticalNavLayout>
     <!-- 👉 navbar -->
     <template #navbar="{ toggleVerticalOverlayNavActive }">
-      <div class="d-flex h-100 align-center">
-        <!-- 👉 Vertical nav toggle in overlay mode -->
+      <!-- <div class="navbar-fixed"> -->
+      <!-- <div class="d-flex h-100 align-center"> -->
+      <!-- 👉 Vertical nav toggle in overlay mode -->
+      <!-- 👉 Search -->
+      <div
+        class="d-flex h-100 align-center cursor-pointer"
+        style="user-select: none"
+      >
         <IconBtn
-          class="ms-n3 d-lg-none"
+          class="ms-n d-lg-none"
           @click="toggleVerticalOverlayNavActive(true)"
         >
           <VIcon icon="mdi-menu" />
         </IconBtn>
-
-        <!-- 👉 Search -->
-        <div
-          class="d-flex align-center cursor-pointer"
-          style="user-select: none;"
-        >
-          <!-- 👉 Search Trigger button -->
-          <IconBtn>
-            <VIcon icon="mdi-magnify" />
-          </IconBtn>
-
-          <span class="d-none d-md-flex align-center text-disabled">
-            <span class="me-3">Search</span>
-            <span class="meta-key">&#8984;K</span>
-          </span>
-        </div>
+        <!-- 👉 Search Trigger button -->
+        <IconBtn @click="newDialog = true">
+          <VIcon icon="mdi-magnify" />
+        </IconBtn>
+        <span class="d-none d-md-flex align-center text-disabled">
+          <span class="me-3">搜索</span>
+        </span>
 
         <VSpacer />
 
@@ -60,7 +106,6 @@ const upgradeBanner = computed(() => {
         >
           <VIcon icon="mdi-github" />
         </IconBtn>
-
         <IconBtn class="me-2">
           <VIcon icon="mdi-bell-outline" />
         </IconBtn>
@@ -69,24 +114,10 @@ const upgradeBanner = computed(() => {
 
         <UserProfile />
       </div>
+      <!-- </div> -->
     </template>
 
     <template #vertical-nav-content>
-      <VerticalNavLink
-        :item="{
-          title: 'Dashboard',
-          icon: 'mdi-home-outline',
-          to: '/dashboard',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Account Settings',
-          icon: 'mdi-account-cog-outline',
-          to: '/account-settings',
-        }"
-      />
-
       <!-- 👉 Pages -->
       <VerticalNavSectionTitle
         :item="{
@@ -95,91 +126,39 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
-          title: 'Login',
+          title: '登录',
           icon: 'mdi-login',
           to: '/login',
         }"
       />
       <VerticalNavLink
         :item="{
-          title: 'Register',
+          title: '注册',
           icon: 'mdi-account-plus-outline',
           to: '/register',
         }"
       />
-      <VerticalNavLink
-        :item="{
-          title: 'Error',
-          icon: 'mdi-information-outline',
-          to: '/no-existence',
-        }"
-      />
-
       <!-- 👉 User Interface -->
       <VerticalNavSectionTitle
         :item="{
           heading: 'User Interface',
         }"
       />
-      <!--
-        <VerticalNavLink
-        :item="{
-        title: 'Typography',
-        icon: 'mdi-alpha-t-box-outline',
-        to: '/typography',
-        }"
-        />
-        <VerticalNavLink
-        :item="{
-        title: 'Icons',
-        icon: 'mdi-eye-outline',
-        to: '/icons',
-        }"
-        />
-        <VerticalNavLink
-        :item="{
-        title: 'Cards',
-        icon: 'mdi-credit-card-outline',
-        to: '/cards',
-        }"
-        />
-      -->
       <VerticalNavLink
         :item="{
-          title: 'Courselist',
+          title: '课程列表',
           icon: 'mdi-table',
           to: '/courselist',
         }"
       />
-      <!--
-        <VerticalNavLink
+      <VerticalNavLink
         :item="{
-        title: 'Form Layouts',
-        icon: 'mdi-form-select',
-        to: '/form-layouts',
+          title: '关于我们',
+          icon: 'mdi-information-outline',
+          to: '/about-us',
         }"
-        />
-      -->
+      />
     </template>
-
-    <template #after-vertical-nav-items>
-      <!-- 👉 illustration -->
-      <a
-        href="https://themeselection.com/item/materio-vuetify-vuejs-admin-template"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="margin-left: 7px;"
-      >
-        <img
-          :src="upgradeBanner"
-          alt="upgrade-banner"
-          transition="scale-transition"
-          class="upgrade-banner mx-auto"
-          style="max-width: 230px;"
-        >
-      </a>
-    </template>
-
     <!-- 👉 Pages -->
     <slot />
 
@@ -198,5 +177,12 @@ const upgradeBanner = computed(() => {
   line-height: 1.3125rem;
   padding-block: 0.125rem;
   padding-inline: 0.25rem;
+}
+
+.navbar-fixed {
+  position: fixed;
+  width: 84%;
+  background-color: #fff;
+  opacity: 1;
 }
 </style>

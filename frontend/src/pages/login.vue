@@ -22,6 +22,7 @@ const authThemeMask = computed(() => {
 })
 /* handle submit*/
 const authStore = useAuthStore()
+const router = useRouter();
 
 const schema = yup.object({
   password: yup.string().min(8, 'must be at least 8 characters long').required(),
@@ -36,6 +37,11 @@ const [password, email] = useFieldModel(['password', 'email'])
 
 const onSubmit = handleSubmit((values) => {
   authStore.login(values.email, values.password)
+  .then(() => {
+      if (authStore.isLoggedIn) {
+        router.push('/main')
+      }
+    })
 })
 
 const isPasswordVisible = ref(false)
@@ -52,13 +58,13 @@ const isPasswordVisible = ref(false)
         </template>
 
         <VCardTitle class="font-weight-semibold text-2xl text-uppercase">
-          Materio
+          Rate My CUC
         </VCardTitle>
       </VCardItem>
 
       <VCardText class="pt-2">
         <h5 class="text-h5 font-weight-semibold mb-1">
-          Welcome to Materio! 👋🏻
+          Welcome to Rate My CUC! 👋🏻
         </h5>
         <p class="mb-0">
           Please sign-in to your account and start the adventure

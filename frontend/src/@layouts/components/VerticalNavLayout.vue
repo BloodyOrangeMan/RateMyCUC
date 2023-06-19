@@ -129,7 +129,9 @@ export default defineComponent({
         .layout-navbar {
           @if variables.$layout-vertical-nav-navbar-is-contained {
             @include mixins.boxed-content;
-          } @else {
+          }
+
+          @else {
             .navbar-content-container {
               @include mixins.boxed-content;
             }

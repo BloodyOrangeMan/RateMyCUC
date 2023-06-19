@@ -16,7 +16,7 @@ export class UserService {
     const newUser = await this.usersRepository.create({
       email,
       username,
-     // password, 感觉这里传password不太好吧
+      password,
     });
     const result = await this.usersRepository.save(newUser);
     return result;

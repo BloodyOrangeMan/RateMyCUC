@@ -14,32 +14,8 @@ const router = createRouter({
           component: () => import('../pages/main.vue')
         },
         {
-          path: 'dashboard',
-          component: () => import('../pages/dashboard.vue'),
-        },
-        {
-          path: 'account-settings',
-          component: () => import('../pages/account-settings.vue'),
-        },
-        {
-          path: 'typography',
-          component: () => import('../pages/typography.vue'),
-        },
-        {
-          path: 'icons',
-          component: () => import('../pages/icons.vue'),
-        },
-        {
-          path: 'cards',
-          component: () => import('../pages/cards.vue'),
-        },
-        {
           path: 'courselist',
           component: () => import('../pages/courselist.vue'),
-        },
-        {
-          path: 'form-layouts',
-          component: () => import('../pages/form-layouts.vue'),
         },
         {
           path: '/search/',
@@ -55,6 +31,10 @@ const router = createRouter({
           path: 'profile',
           name: 'Profile',
           component: () => import('../pages/profile.vue'),
+        },
+        {
+          path:'about-us',
+          component: () => import('../pages/about-us.vue'),
         },
       ],
     },
