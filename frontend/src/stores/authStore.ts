@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axiosInstance from '../plugins/axios/axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(email: string, password: string) {
       try {
-        const response = await axios.post('api/auth/login', {
+        const response = await axiosInstance.post('api/auth/login', {
           withCredentials: true,
           email,
           password,
@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
 
         // Assuming the API responds with a token and user information
         if (response && response.data)
-          this.user = response.data.passport.user
+          this.user = response.data.passport.user 
       }
       catch (err) {
         console.error(err)
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(username: string, email: string, password: string) {
       try {
-        const response = await axios.post('/auth/register', {
+        const response = await axiosInstance.post('/api/auth/register', {
           withCredentials: true,
           username,
           email,

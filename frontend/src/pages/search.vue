@@ -12,11 +12,26 @@ const props = defineProps({
 
 defineExpose({ keyword: props.keyword })
 
+const route = useRoute()
 const courseStore = useCourseStore()
 const keyword = ref('')
 const serverItems = ref([] as Course[])
 const totalItems = ref(0)
 const loading = ref(false)
+
+watch(
+  () => route.params,
+  async () => {
+    const searchParams = new URLSearchParams(window.location.search)
+    keyword.value = searchParams.get('keyword') || ''
+    const result = await courseStore.fetchSearchResult(keyword.value, 1, 10)
+  if (result) {
+    serverItems.value = result.courseList
+    totalItems.value = parseInt(result.totalItems[0].total)
+  }
+  },
+  { immediate: true },
+)
 
 onMounted(async () => {
   const searchParams = new URLSearchParams(window.location.search)

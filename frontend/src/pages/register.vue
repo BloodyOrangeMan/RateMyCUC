@@ -17,6 +17,8 @@ const authThemeMask = computed(() => {
     : authV1MaskDark
 })
 
+const router = useRouter()
+
 const form = ref({
   privacyPolicies: false,
 })
@@ -37,6 +39,11 @@ const [username, email, password] = useFieldModel(['username', 'email', 'passwor
 
 const onSubmit = handleSubmit((values) => {
   registerStore.register(values.username, values.email, values.password)
+  .then(() => {
+      if (registerStore.user) {
+        router.push('/main')
+      }
+    })
 })
 
 const isPasswordVisible = ref(false)
@@ -53,7 +60,7 @@ const isPasswordVisible = ref(false)
         </template>
 
         <VCardTitle class="font-weight-semibold text-2xl text-uppercase">
-          Materio
+          Rate My CUC
         </VCardTitle>
       </VCardItem>
 
@@ -61,9 +68,6 @@ const isPasswordVisible = ref(false)
         <h5 class="text-h5 font-weight-semibold mb-1">
           Adventure starts here 🚀
         </h5>
-        <p class="mb-0">
-          Make your app management easy and fun!
-        </p>
       </VCardText>
 
       <VCardText>
